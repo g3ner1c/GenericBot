@@ -210,7 +210,7 @@ async def on_message(message):
         # https://cdn.discordapp.com/attachments/745066591443746857/879558411895848960/anime-couples.png
 
         txt_increment("stats.txt")
-        with open("shitpost.txt") as file:
+        with open("posts.txt") as file:
 
             lines = file.readlines()
             await message.channel.send(random.choice(lines))
