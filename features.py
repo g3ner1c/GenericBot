@@ -20,6 +20,10 @@ from discord.ext import commands, tasks
 from discord_slash import SlashCommand, SlashContext
 from randfacts import get_fact
 from scipy.interpolate import make_interp_spline
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 bot = commands.Bot(command_prefix='$')
 
