@@ -27,15 +27,15 @@ load_dotenv()
 
 bot = commands.Bot(command_prefix='$')
 
-client = discord.Client(message)
+client = discord.Client()
 
 def txt_increment(text_file):
     
     file = open(text_file,"r+")
-    num = file.readline(message)
-    num = int(num.strip(message))
+    num = file.readline()
+    num = int(num.strip())
     file.truncate(0)
-    file.close(message)
+    file.close()
     file = open(text_file,"r+")
     file.write(str((num + 1)))
 
@@ -44,25 +44,25 @@ async def on_ready(message):
     await client.change_presence(activity=discord.Game(name="sussus amogus?"))
     print('We have logged in as {0.user}'.format(client))
 
-async def heartbeat(message):
+async def heartbeat():
 
     global ping_arr
     global time_ping
     ping_arr = np.array([])
 
-    await client.wait_until_ready(message)
-    while not client.is_closed(message):
+    await client.wait_until_ready()
+    while not client.is_closed():
 
         if len(ping_arr) < 16:
 
             ping_arr = np.append(ping_arr, int(round(client.latency * 1000,3)))
-            time_ping = time.time(message)
+            time_ping = time.time()
 
         else:
 
             ping_arr = np.delete(ping_arr, 0)
             ping_arr = np.append(ping_arr, int(round(client.latency * 1000,3)))
-            time_ping = time.time(message)
+            time_ping = time.time()
 
         await asyncio.sleep(40)
 
@@ -255,7 +255,7 @@ async def on_message(message):
 
 t1 = time.time()
 
-client.loop.create_task(heartbeat(message))
+client.loop.create_task(heartbeat())
 client.run(os.getenv('discordtoken'))
 
 # client.get_channel(745066591443746857).send('*System Restart*')
