@@ -1,22 +1,19 @@
 import asyncio
-import json
 import math
 import os
 import random
 import re
 import time
 import re
-import pickle
 
 import asyncpraw
 import discord
 import matplotlib.pyplot as plt
 import numpy as np
-import requests
 import uwuify
 import wikipedia
 from discord import channel, message, player
-from discord.ext import commands, tasks
+from discord.ext import commands
 from randfacts import get_fact
 from scipy.interpolate import make_interp_spline
 from dotenv import load_dotenv
@@ -102,24 +99,16 @@ class Feature:
     global channel_say
     channel_say = 0
 
-    async def help(message):
+    async def help(ctx,page):
         license  = 'Copyright © 2021 awesomeplaya211 & Banshee-72 \n Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: \n The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. \nTHE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.'
-        await message.channel.send('By using the bot you agree to the following license:')
-        await message.channel.send(license)
-        with open('auth.pckl', 'rb') as file:
-            auth = pickle.load(file)
-        auth = auth
-        with open('auth.pckl', 'wb') as file:
-            auth.append(message.author)
-            auth = pickle.dump(auth,file)
-        with open('help.pckl', 'rb') as file:
-            pages = pickle.load(file)
-        page = message.content[-1:]
+        await ctx.send('By using the bot you agree to the following license:')
+        await ctx.send(license)
+        pages = ["in progress"]
         try:
             if pages[page]:
-                await message.channel.send(pages[page])
+                await ctx.send(pages[page])
         except:
-            await message.channel.send('lol it broke')
+            await ctx.send('lol it broke')
 
 
 
@@ -134,14 +123,7 @@ class Feature:
         
         ]
 
-    async def graphing(message):
-
-        msg = message.content
-        equ = msg[6:]
-        equ = equ.strip(' ')
-        equ = equ
-        equ = equ[:len(equ)-2]
-        subst = equ[::-1][0]
+    async def graphing(ctx, subst, equ):
         mequ = equ
         x = np.linspace(-125, 125, 2501)
         y = []
@@ -167,30 +149,30 @@ class Feature:
         file = discord.File("graph.png")
         embed = discord.Embed()
         embed.set_image(url="attachment://graph.png")
-        await message.channel.send(embed=embed, file=file)
+        await ctx.send(embed=embed, file=file)
         plt.clf()
         
-    async def hello(message):
-        await message.channel.send('Hello!')
+    async def hello(ctx):
+        await ctx.send('Hello!')
         
-    async def idsay(message):
+#    async def idsay(ctx):
+#        
+#        if message.author.id == 538921994645798915:
+#
+#            channel_say = client.get_channel(int(message.content[7:]))
+#            print('channel_say set to '+ message.content[7:])
+
+    async def say(ctx,term):
+
         
-        if message.author.id == 538921994645798915:
+        if ctx.author.id == 538921994645798915:
 
-            channel_say = client.get_channel(int(message.content[7:]))
-            print('channel_say set to '+ message.content[7:])
-
-    async def say(message):
-
-        
-        if message.author.id == 538921994645798915:
-
-            await channel_say.send(message.content[5:])
+            await channel_say.send(term)
     
-    async def test(message):
-        await message.channel.send(message.author)
+    async def test(ctx):
+        await ctx.send(ctx.author)
         
-    async def art(message):
+    async def art(ctx):
         
         subreddit = await reddit.subreddit("art")
 
@@ -206,12 +188,12 @@ class Feature:
                 count += 1
 
         reddit_post = random.choice(post_list)
-        await message.channel.send(reddit_post.title)
-        await message.channel.send(reddit_post.url)
-        await message.channel.send('Posted by u/'+reddit_post.author.name)
-        await message.channel.send(str(reddit_post.score)+' upvotes')
+        await ctx.send(reddit_post.title)
+        await ctx.send(reddit_post.url)
+        await ctx.send('Posted by u/'+reddit_post.author.name)
+        await ctx.send(str(reddit_post.score)+' upvotes')
 
-    async def cat(message):
+    async def cat(ctx):
         
         subreddit = await reddit.subreddit("cats")
 
@@ -227,10 +209,10 @@ class Feature:
                 count += 1
 
         reddit_post = random.choice(post_list)
-        await message.channel.send(reddit_post.title)
-        await message.channel.send(reddit_post.url)
-        await message.channel.send('Posted by u/'+reddit_post.author.name)
-        await message.channel.send(str(reddit_post.score)+' upvotes')
+        await ctx.send(reddit_post.title)
+        await ctx.send(reddit_post.url)
+        await ctx.send('Posted by u/'+reddit_post.author.name)
+        await ctx.send(str(reddit_post.score)+' upvotes')
 
 
 
@@ -240,32 +222,32 @@ class Feature:
             with open("posts.txt") as file:
 
                 lines = file.readlines()
-                await message.channel.send(random.choice(lines))
+                await ctx.send(random.choice(lines))
 
         async def truth():
             
             with open("truth.txt") as file:
 
                 lines = file.readlines()
-                await message.channel.send(random.choice(lines))
+                await ctx.send(random.choice(lines))
 
-    async def truth(message):
+    async def truth(ctx):
         
         with open("truth.txt") as file:
 
             lines = file.readlines()
-            await message.channel.send(random.choice(lines))
+            await ctx.send(random.choice(lines))
 
-    async def calc(message):
+    async def calc(ctx,equ):
 
 
         
-        await message.channel.send(str(eval(message.content[6:])))
+        await ctx.send(str(eval(equ)))
        
-    async def ping(message):
-        await message.channel.send(f'Pong! Latency: {round(client.latency * 1000, 3)}ms')
+    async def ping(ctx):
+        await ctx.send(f'Pong! Latency: {round(client.latency * 1000, 3)}ms')
          
-    async def netgraph(message):
+    async def netgraph(ctx):
         
 
         time_since_ping = round(time.time() - time_ping)
@@ -298,57 +280,68 @@ class Feature:
         embed = discord.Embed() # any kwargs you want here
         embed.set_image(url="attachment://test.png")
         # filename and extension have to match (ex. "thisname.jpg" has to be "attachment://thisname.jpg")
-        await message.channel.send(embed=embed, file=file)
+        await ctx.send(embed=embed, file=file)
         plt.clf()
 
     #                               put repo branch in $info here for easier testing
     #                                                vvvvvvvv
 
-    async def info(message):
-        await message.channel.send('*RockyBot v1.2.2 - dev*\nHi! I am an emotionless bot programmed to feign a personality to you!\nMy owner is awesomeplaya211#4051\nDM him for bug reports or suggestions\nNotable contributions (@Banshee-72 on GitHub)\n**I am now open source!**\n**Use $github for my Github page!**\nProfile picture by Johnny Boy#4966')
+    async def info(ctx):
+        await ctx.send('*RockyBot v1.2.2 - dev*\nHi! I am an emotionless bot programmed to feign a personality to you!\nMy owner is awesomeplaya211#4051\nDM him for bug reports or suggestions\nNotable contributions (@Banshee-72 on GitHub)\n**I am now open source!**\n**Use $github for my Github page!**\nProfile picture by Johnny Boy#4966')
         
-    async def pfp(message):
+    async def pfp(ctx):
 
         file = discord.File("pfp.jpg") # an image in the same folder as the main bot file
         embed = discord.Embed() # any kwargs you want here
         embed.set_image(url="attachment://pfp.jpg")
         # filename and extension have to match (ex. "thisname.jpg" has to be "attachment://thisname.jpg")
-        await message.channel.send(embed=embed, file=file)
+        await ctx.send(embed=embed, file=file)
 
-    async def github(message):
+    async def github(ctx):
         
-        await message.channel.send('https://github.com/awesomeplaya211/RockyBot')
+        await ctx.send('https://github.com/awesomeplaya211/RockyBot')
 
-    async def invite(message):
-        await message.channel.send('Add me to your server!')
-        await message.channel.send('https://discord.com/api/oauth2/authorize?client_id=866481377151156304&permissions=2148002880&scope=bot')
+    async def invite(ctx):
+        await ctx.send('Add me to your server!')
+        await ctx.send('https://discord.com/api/oauth2/authorize?client_id=866481377151156304&permissions=2148002880&scope=bot')
         
-    async def flip(message):
+    async def flip(ctx):
 
         if bool(random.randint(0,1)):
-            await message.channel.send('Heads')
+            await ctx.send('Heads')
             
 
         else:
-            await message.channel.send('Tails')
+            await ctx.send('Tails')
             
-    async def ball(message):
-        await message.channel.send(random.choice(Feature._8ball))
+    async def ball(ctx):
+        await ctx.send(random.choice(Feature._8ball))
         
-    async def rps(message):
+    async def rps(ctx,choice):
+
+        if choice == 'rock': choice = 0
+        if choice == 'paper': choice = 1
+        if choice == 'scissors': choice = 2
+        if choice == 'r': choice = 0
+        if choice == 'p': choice = 1
+        if choice == 's': choice = 2
 
         rng = random.randint(0,2)
 
-        if rng == 0:
-            await message.channel.send('You win!')
+        if choice-rng == 0:
+            await ctx.send('Tie')
             
+        elif choice == 0 and rng == 1:
+            await ctx.send('You lost lol')
 
-        elif rng == 1:
-            await message.channel.send('lol you lost')
-            
+        elif choice == 1 and rng == 2:
+            await ctx.send('You lost lol')
 
+        elif choice == 2 and rng == 0:
+            await ctx.send('You lost lol')
+    
         else:
-            await message.channel.send('Tie! Wanna go again?')
+            await ctx.send('I call hacks')
             
     async def gm(message):
 
@@ -377,41 +370,40 @@ class Feature:
             await message.channel.send(string)
             print(string)
 
-    async def status(message, t1):
+    async def status(ctx, t1):
         t2 = time.time()
-        await message.channel.send('*Bot Online*')
+        await ctx.send('*Bot Online*')
         string = 'Online for ' + str(math.floor((t2-t1)/3600)) + ' hours ' + str(math.floor(((t2-t1)%3600)/60)) + ' minutes '+ str(round((t2-t1)%60,3)) + ' seconds'
-        await message.channel.send(string)
+        await ctx.send(string)
           
-    async def hmm(message):
-        await message.channel.send('https://i.pinimg.com/originals/15/8b/ed/158bed9819e4fccf7e18a5eeeaf79c6b.png')
+    async def hmm(ctx):
+        await ctx.send('https://i.pinimg.com/originals/15/8b/ed/158bed9819e4fccf7e18a5eeeaf79c6b.png')
         
-    async def kill(message):
+    async def kill(ctx):
 
-        if message.author.id == 538921994645798915:
-            await message.channel.send('*dies*')
+        if ctx.author == 538921994645798915:
+            await ctx.send('*dies*')
             
             await client.logout()
 
         else:
-            await message.channel.send("You're not my dev! >:(")
-            print(message.author, 'attempted to kill bot')
+            await ctx.send("You're not my dev! >:(")
+            print(ctx.author, 'attempted to kill bot')
             
-#    async def help(message):
-#        await message.channel.send('$info - information about me\n$github - my github page\n$status - bot status\n$invite - add me to your server\n$flip - flips a coin\n$8ball - 100% accurate answer to any question\n$rps - Rock Paper Scissors\n$hmm - hmm\n$kill - kills me **dont do this plz :C**')
-#        await message.channel.send('$secret - its a secret! >_<\n$uwuify - UWU\n$stats - statistics\n$hug - hugs :D\n$blackjack - play me in blackjack!\n$blackjackstats - blackjack stats!\n$wiki - search wikipedia\n$fact - tell you a random fact\n$ping - latency test\n$netgraph - latency graph\n$art - top 100 post from r/art from the past week\n$cat - top 100 post from r/cats from the past week\n$shitpost or $196 - shitpost generator (sourced from Johnny Boy#4966 and various shitpost subreddits)')
+#    async def help(ctx):
+#        await ctx.send('$info - information about me\n$github - my github page\n$status - bot status\n$invite - add me to your server\n$flip - flips a coin\n$8ball - 100% accurate answer to any question\n$rps - Rock Paper Scissors\n$hmm - hmm\n$kill - kills me **dont do this plz :C**')
+#        await ctx.send('$secret - its a secret! >_<\n$uwuify - UWU\n$stats - statistics\n$hug - hugs :D\n$blackjack - play me in blackjack!\n$blackjackstats - blackjack stats!\n$wiki - search wikipedia\n$fact - tell you a random fact\n$ping - latency test\n$netgraph - latency graph\n$art - top 100 post from r/art from the past week\n$cat - top 100 post from r/cats from the past week\n$shitpost or $196 - shitpost generator (sourced from Johnny Boy#4966 and various shitpost subreddits)')
           
-    async def secret(message):
-        await message.channel.send('https://media.tenor.com/images/7598d103a735d5568964e4967e42823d/tenor.gif')
-        await message.channel.send('lol baited')
+    async def secret(ctx):
+        await ctx.send('https://media.tenor.com/images/7598d103a735d5568964e4967e42823d/tenor.gif')
+        time.sleep(3)
+        await ctx.send('lol baited')
           
-    async def copycat(message):
-        await message.channel.send(message.content)
+    async def copycat(ctx):
+        await ctx.send(ctx)
           
-    async def uwu(message):
-        uwu = message.content
-        uwu = uwu.split()
-        uwu  = uwu[7:]
+    async def uwu(ctx,text):
+        uwu  = text
         uwuified = ''
         for i in range(len(uwu)):
 
@@ -424,33 +416,30 @@ class Feature:
 
         uwuified.strip()
         uwuified = uwuify.uwu(uwuified)
-        await message.channel.send(uwuified + 'uwu')
+        await ctx.send(uwuified + 'uwu')
          
-    async def stats(message):
-
-        
+    async def stats(ctx):
 
         file = open("stats.txt","r+")
         stat = file.readline()
         stat = int(stat.strip())
         string_stat = 'I have been called '+ str(stat) + ' times'
-        await message.channel.send(string_stat)
+        await ctx.send(string_stat)
 
-    async def hug(message):
+    async def hug(ctx):
 
-        await message.channel.send('⊂(・▽・⊂)')
+        await ctx.send('⊂(・▽・⊂)')
 
-    async def setlang(message):
-
-        wiki_lang = message.content
+    async def setlang(ctx,lang):
+        wiki_lang = lang
         wiki_lang = wiki_lang.split()
         wikipedia.set_lang(wiki_lang[1])
         wiki_lang = 'Language set to ' + wikipedia.languages()[wiki_lang[1]]
 
-        await message.channel.send(wiki_lang)
+        await ctx.send(wiki_lang)
 
-    async def wiki(message):
-        wiki_search = message.content
+    async def wiki(ctx,search):
+        wiki_search = search
         wiki_search = wiki_search.split()
         wiki_search.remove('$wiki')
         wiki_search_param = ''
@@ -463,40 +452,40 @@ class Feature:
 
         wiki_search_str = '*Searching Wikipedia for ' + wiki_search_param + '*'
 
-        await message.channel.send(wiki_search_str)
+        await ctx.send(wiki_search_str)
 
         try:
 
-            await message.channel.send(wikipedia.page(wikipedia.search(wiki_search_param)[0], auto_suggest = False).url)
+            await ctx.send(wikipedia.page(wikipedia.search(wiki_search_param)[0], auto_suggest = False).url)
 
 
         except IndexError:
 
-            await message.channel.send('***Did you mean ' + wikipedia.page(wiki_search_param, auto_suggest = True).title + '?***')
-            await message.channel.send(wikipedia.page(wiki_search_param, auto_suggest = True).url)
+            await ctx.send('***Did you mean ' + wikipedia.page(wiki_search_param, auto_suggest = True).title + '?***')
+            await ctx.send(wikipedia.page(wiki_search_param, auto_suggest = True).url)
 
-    async def randomwiki(message):
-
-        
-        await message.channel.send(wikipedia.page(wikipedia.random()).url)
-
-    async def fact(message):
+    async def randomwiki(ctx):
 
         
-        await message.channel.send(get_fact())
+        await ctx.send(wikipedia.page(wikipedia.random()).url)
 
-    async def blackjackinfo(message):
+    async def fact(ctx):
 
-        await message.channel.send('*Blackjack* also known as *Twenty-One* or *Vingt-et-un* is the most popular casino game in the world where the objective is to get a value of 21.')
-        await message.channel.send('Numbered cards are worth their number and face cards (such as J Q K) are worth 10.\nHowever, aces are worth either ***1 or 11 and can be interpreted either way***')
-        await message.channel.send('Examples of winning combinations of 21 include:\n*A K*\n*A 10*\n*3 5 7 6*\n*A 5 7 8*')
-        await message.channel.send("The dealer (aka me) first deals out 2 cards to itself and the player.The player's cards are both visible, where the one of the dealer's cards are covered")
-        await message.channel.send("The player can either 'hit' taking a random card or 'stand' choosing to end their turn and not take anymore cards.\nOnce the player's turn ends, the dealer goes. The dealer must keep on taking cards until it's value is 17 or above.\nWhen it reaches that threshold, it stands and ends its turn.")
-        await message.channel.send("The game can end if:\nThe player gets 21 (win)\nThe dealer gets 21 (lose)\nThe player goes over 21 (lose)\nThe dealer goes over 21 (win)\nIf the dealer has more value than the player during its turn (lose)\nAt the end of both turns the player has more value than the dealer (win)\nAt the end of both turns the player and the dealer have equal value (tie)")
-        await message.channel.send('Have fun!')
-        await message.channel.send('*Note: RockyBot does not support underage gambling, play responsibly*')
+        
+        await ctx.send(get_fact())
 
-    async def blackjackstats(message):
+    async def blackjackinfo(ctx):
+
+        await ctx.send('*Blackjack* also known as *Twenty-One* or *Vingt-et-un* is the most popular casino game in the world where the objective is to get a value of 21.')
+        await ctx.send('Numbered cards are worth their number and face cards (such as J Q K) are worth 10.\nHowever, aces are worth either ***1 or 11 and can be interpreted either way***')
+        await ctx.send('Examples of winning combinations of 21 include:\n*A K*\n*A 10*\n*3 5 7 6*\n*A 5 7 8*')
+        await ctx.send("The dealer (aka me) first deals out 2 cards to itself and the player.The player's cards are both visible, where the one of the dealer's cards are covered")
+        await ctx.send("The player can either 'hit' taking a random card or 'stand' choosing to end their turn and not take anymore cards.\nOnce the player's turn ends, the dealer goes. The dealer must keep on taking cards until it's value is 17 or above.\nWhen it reaches that threshold, it stands and ends its turn.")
+        await ctx.send("The game can end if:\nThe player gets 21 (win)\nThe dealer gets 21 (lose)\nThe player goes over 21 (lose)\nThe dealer goes over 21 (win)\nIf the dealer has more value than the player during its turn (lose)\nAt the end of both turns the player has more value than the dealer (win)\nAt the end of both turns the player and the dealer have equal value (tie)")
+        await ctx.send('Have fun!')
+        await ctx.send('*Note: RockyBot does not support underage gambling, play responsibly*')
+
+    async def blackjackstats(ctx):
 
         file = open("blackjackstats.txt","r+")
         stat = file.readline()
@@ -505,9 +494,9 @@ class Feature:
         beat, lost, tied = stat
         string_stat = 'I have beaten ' + beat + ' players, lost to ' + lost + ' players, and tied with ' + tied + ' players'
 
-        await message.channel.send(string_stat)
+        await ctx.send(string_stat)
 
-    async def blackjack(message): 
+    async def blackjack(ctx): 
 
         
         
@@ -621,12 +610,12 @@ class Feature:
 
         player_str = 'Player: ' + (' '.join(map(str, player))) + ' | Value: ' + str(max_value(player))
 
-        await message.channel.send(house_str)
-        await message.channel.send(player_str)
+        await ctx.send(house_str)
+        await ctx.send(player_str)
 
         if _21check(player, 21) == '21':
 
-            await message.channel.send('21! You win!')
+            await ctx.send('21! You win!')
             blackjack_increment("blackjackstats.txt", 1)
             
 
@@ -641,7 +630,7 @@ class Feature:
 
                 if action.content == '$blackjackexit':
                     
-                    await message.channel.send('Exited Blackjack')
+                    await ctx.send('Exited Blackjack')
                     
                     break 
 
@@ -654,21 +643,21 @@ class Feature:
 
                     player_str = 'Player: ' + (' '.join(map(str, player))) + ' | Value: ' + str(max_value(player))
 
-                    await message.channel.send(house_str)
-                    await message.channel.send(player_str)
+                    await ctx.send(house_str)
+                    await ctx.send(player_str)
                     
 
                     # check if hand is above 21 or not
                     if _21check(player, 21) == '21':
                         
-                        await message.channel.send('21! You win!')
+                        await ctx.send('21! You win!')
                         blackjack_increment("blackjackstats.txt", 1)
                         
                         break
 
                     if _21check(player, 21) == 'over':
                         
-                        await message.channel.send('Bust! You lose!')
+                        await ctx.send('Bust! You lose!')
                         blackjack_increment("blackjackstats.txt", 0)
                         
                         break
@@ -680,21 +669,21 @@ class Feature:
 
                     player_str = 'Player: ' + (' '.join(map(str, player))) + ' | Value: ' + str(max_value(player))
 
-                    await message.channel.send(house_str)
-                    await message.channel.send(player_str)
-                    await message.channel.send('---------------')
+                    await ctx.send(house_str)
+                    await ctx.send(player_str)
+                    await ctx.send('---------------')
                     
 
                     if _21check(house, 21) == '21':
 
-                        await message.channel.send('21! You lose!')
+                        await ctx.send('21! You lose!')
                         blackjack_increment("blackjackstats.txt", 0)
                         
                         break
                         
                     if max_value(player) < max_value(house):
 
-                        await message.channel.send('I have more value! You lose!')
+                        await ctx.send('I have more value! You lose!')
                         blackjack_increment("blackjackstats.txt", 0)
                         
                         break
@@ -710,35 +699,35 @@ class Feature:
 
                         player_str = 'Player: ' + (' '.join(map(str, player))) + ' | Value: ' + str(max_value(player))
 
-                        await message.channel.send(house_str)
-                        await message.channel.send(player_str)
-                        await message.channel.send('---------------')
+                        await ctx.send(house_str)
+                        await ctx.send(player_str)
+                        await ctx.send('---------------')
 
 
                         if _21check(house, 21) == '21':
                     
-                            await message.channel.send('21! You lose!')
+                            await ctx.send('21! You lose!')
                             blackjack_increment("blackjackstats.txt", 0)
                             
                             break
 
                         elif _21check(house, 21) == 'over':
                             
-                            await message.channel.send('Bust! You win!')
+                            await ctx.send('Bust! You win!')
                             blackjack_increment("blackjackstats.txt", 1)
                             
                             break
 
                         elif max_value(player) < max_value(house):
 
-                            await message.channel.send('I have more value! You lose!')
+                            await ctx.send('I have more value! You lose!')
                             blackjack_increment("blackjackstats.txt", 0)
                             
                             break
 
                     if max_value(player) > max_value(house):
 
-                        await message.channel.send('You have more value! You win!')
+                        await ctx.send('You have more value! You win!')
                         blackjack_increment("blackjackstats.txt", 1)
                         
                         break
@@ -746,7 +735,7 @@ class Feature:
                     elif max_value(player) == max_value(house):
 
 
-                        await message.channel.send('Equal value! Tie!')
+                        await ctx.send('Equal value! Tie!')
                         blackjack_increment("blackjackstats.txt", 2)
                         
                         break

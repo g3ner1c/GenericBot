@@ -1,23 +1,11 @@
 import asyncio
-import json
-import math
 import os
-import random
-import re
+from hashlib import sha256
 import time
-import pickle
 
-import asyncpraw
 import discord
-import matplotlib.pyplot as plt
 import numpy as np
-import requests
-import uwuify
-import wikipedia
-from discord import channel, message, player
-from discord.ext import commands, tasks
-from randfacts import get_fact
-from scipy.interpolate import make_interp_spline
+from discord.ext import commands
 from dotenv import load_dotenv
 
 from features import Feature as features
@@ -25,8 +13,6 @@ from features import Feature as features
 load_dotenv()
 
 bot = commands.Bot(command_prefix='$')
-
-client = discord.Client()
 
 def txt_increment(text_file):
     
@@ -38,10 +24,10 @@ def txt_increment(text_file):
     file = open(text_file,"r+")
     file.write(str((num + 1)))
 
-@client.event
+@bot.event
 async def on_ready():
-    await client.change_presence(activity=discord.Game(name="VScode for 12,021 years"))
-    print('We have logged in as {0.user}'.format(client))
+    await bot.change_presence(activity=discord.Game(name="VScode for 12,021 years"))
+    print('We have logged in as {0.user}'.format(bot))
 
 async def heartbeat():
 
@@ -49,107 +35,33 @@ async def heartbeat():
     global time_ping
     ping_arr = np.array([])
 
-    await client.wait_until_ready()
-    while not client.is_closed():
+    await bot.wait_until_ready()
+    while not bot.is_closed():
 
         if len(ping_arr) < 16:
 
-            ping_arr = np.append(ping_arr, int(round(client.latency * 1000,3)))
+            ping_arr = np.append(ping_arr, int(round(bot.latency * 1000,3)))
             time_ping = time.time()
 
         else:
 
             ping_arr = np.delete(ping_arr, 0)
-            ping_arr = np.append(ping_arr, int(round(client.latency * 1000,3)))
+            ping_arr = np.append(ping_arr, int(round(bot.latency * 1000,3)))
             time_ping = time.time()
 
         await asyncio.sleep(40)
 
-general = client.get_channel(id=745066591443746857) # replace with channel_id
-bot_commands = general = client.get_channel(id=745651510242836510)
+general = bot.get_channel(id=745066591443746857) # replace with channel_id
+bot_commands = general = bot.get_channel(id=745651510242836510)
 
-@client.event
+@bot.event
 async def on_message(message):
     global channel_say
 
     msg = message.content
     
-    if message.author == client.user:   
+    if message.author == bot.user:   
         return
-
-    # if message.author.id == 866487511840063548 or message.author.id == 866713551295741962: 
-
-    #     rng = random.randint(0,9)
-
-    #     if rng == 0:
-    #         await message.channel.send('**I am the better bot >:(**')
-    if msg.startswith('$') and len(msg) >= 2 and not msg == '$help':
-        txt_increment("stats.txt")
-        with open('auth.pckl', 'rb+') as file:
-            auth = pickle.load(file)
-            file.close()
-        if message.author in auth:
-            pass
-        else:
-            await message.channel.send('You are not authorized. Run $help to authorize.')
-            return
-
-    if msg.startswith('$hello'):
-        await features.hello(message)
-
-    if msg.startswith('$idsay'):
-        await features.idsay(message)
-
-    if msg.startswith('$say'):
-        await features.say(message)
-    
-    if msg.startswith('$test'):
-        await features.test(message)
-        
-    if msg.startswith('$art'):
-        await features.art(message)
-
-    if msg.startswith('$cat'):
-        await features.cat(message)
-
-    if msg.startswith('$196') or msg.startswith('$shitpost'):
-        await features.sp(message)
-
-    if msg.startswith('$truth'):
-        await features.truth(message)
-
-    if msg.startswith('$calc'):
-        await features.calc(message)
-
-    if msg.startswith('$ping'):
-        await features.ping(message)
-
-    if msg.startswith('$netgraph'):
-        await features.netgraph(message)
-    
-    if msg.startswith('$graph'):
-        await features.graphing(message)
-
-    if msg.startswith('$info'):
-        await features.info(message)
-
-    if msg.startswith('$pfp'):
-        await features.pfp(message)
-
-    if msg.startswith('$github'):
-        await features.github(message)
-
-    if msg.startswith('$invite'):
-        await features.invite(message)
-
-    if msg.startswith('$flip'):
-        await features.flip(message)
-
-    if msg.startswith('$8ball'):
-        await features.ball(message)
-
-    if msg.startswith('$rps'):
-        await features.rps(message)
 
     if (msg.startswith('gm') or msg.startswith('GM') or msg.startswith('good morning') or msg.startswith('Good morning')) and (msg != 'gmas') and (msg != 'GMAS'):
         await features.gm(message)
@@ -160,74 +72,151 @@ async def on_message(message):
     if msg.startswith('gg') or msg.startswith('GG'):
         await features.gg(message)
 
-    # if any(word in msg for word in ['69','420']):
-    #     await message.channel.send('nice')
-
-    # if any(word in msg for word in ['owo','OWO','uwu','UWU','oWo','uWu','UwU','OwO']) and message.author.id != 545025575295909899 and not msg.startswith('$uwuify'):
-    #     # time_uwu = time.time(message)
-    #     await message.channel.send('uwu')
-
     if any(word in msg for word in ['mai san','maisan','MAI SAN','MAISAN','mai-san','Mai-san','MAI-SAN']):
         await features.mai(message)
 
-    if msg.startswith('$status'):
-        await features.status(message, t1)
+@bot.event
+async def on_command(ctx):
+    txt_increment()
     
-    if msg.startswith('$hmm'):
-        await features.hmm(message)
+bot.remove_command('help')
 
-    if msg.startswith('$kill'):
-        await features.kill(message)
+@bot.command(name='eval')
+async def eval(ctx,auth,string):
+    if sha256(auth.encode('UTF-8')).hexdigest() == 'dcfadf69b0ceaab3b39423b1a01a19f342321b118657755039fb77f1ba5842a0':
+        eval(string)
 
-    if msg.startswith('$help'):
-        await features.help(message)
-    
-    if msg.startswith('$secret'):
-        await features.secret(message)
-    
-    if msg.startswith('$copycat'):
-        await features.copycat(message)
-    
-    if msg.startswith('$uwuify'):
-        await features.uwu(message)
-    
-    if msg.startswith('$stats'):
-        await features.stats(message)
+@bot.command()
+async def hello(ctx):
+    await features.hello(ctx)
 
-    if msg.startswith('$hug'):
-        await features.hug(message)
+#@bot.command()
+#async def idsay(ctx):
+#    await features.idsay(ctx)
 
-    if msg.startswith('$setwikilang'):
-        await features.setlang(message)
+@bot.command(name='say')
+async def say(ctx,term):
+    await features.say(ctx,term)
 
-    if msg.startswith('$wiki'):
-        await features.wiki(message)
+@bot.command()
+async def art(ctx):
+    await features.art(ctx)
 
-    if msg.startswith('$randomwikipage'):
-        await features.randomwiki(message)
+@bot.command()
+async def cat(ctx):
+    await features.cat(ctx)
 
-    if msg.startswith('$fact'):
-        await features.fact(message)
+@bot.command()
+async def sp(ctx):
+    await features.sp(ctx)
 
-    # if msg.startswith('$spotify'):
-    #     print('made it here')
-    #     txt_increment("stats.txt")
-    #     user = message.author
-    #     print('made it here')
-    #     for activity in user.activities:
-    #         if isinstance(activity, discord.Spotify):
-    #             print('made it here')
-    #             await message.channel.send(f"{user} is listening to {activity.title} by {activity.artist}")
-    #             print('made it here')
+@bot.command()
+async def truth(ctx):
+    await features.truth(ctx)
 
-    if msg == '$blackjackinfo':
-        await features.blackjackinfo(message)
+@bot.command()
+async def calc(ctx,equ):
+    await features.calc(ctx,equ)
 
-    if msg == '$blackjackstats':
-        await features.blackjackstats(message)
+@bot.command(name='ping')
+async def ping(ctx):
+    await features.ping(ctx)
 
-    if msg == '$blackjack': 
-        await features.blackjack(message)
+@bot.command()
+async def netgraph(ctx):
+    await features.netgraph
+
+@bot.command(name='graph')
+async def graph(ctx,equ,subst):
+    await features.graphing(ctx,subst=subst,equ=equ)
+
+@bot.command(name='info')
+async def info(ctx):
+    await ctx.send('*RockyBot v1.2.2 - dev*\nHi! I am an emotionless bot programmed to feign a personality to you!\nMy owner is awesomeplaya211#4051\nDM him for bug reports or suggestions\nNotable contributions (@Banshee-72 on GitHub)\n**I am now open source!**\n**Use $github for my Github page!**\nProfile picture by Johnny Boy#4966')
+
+@bot.command()
+async def pfp(ctx):
+    await features.pfp(ctx)
+
+@bot.command()
+async def github(ctx):
+    await features.github(ctx)
+
+@bot.command()
+async def invite(ctx):
+    await features.invite(ctx)
+
+@bot.command()
+async def flip(ctx):
+    await features.flip(ctx)
+
+@bot.command()
+async def ball(ctx):
+    await features.ball(ctx)
+
+@bot.command()
+async def rps(ctx):
+    await features.rps(ctx)
+
+@bot.command()
+async def status(ctx):
+    await features.status(ctx,t1)
+
+@bot.command()
+async def hmm(ctx):
+    await features.hmm(ctx)
+
+@bot.command()
+async def kill(ctx):
+    await features.kill(ctx)
+
+@bot.command()
+async def help(ctx,page):
+    await features.help(ctx,page)
+
+@bot.command()
+async def secret(ctx):
+    await features.secret(ctx)
+
+@bot.command()
+async def copycat(ctx):
+    await features.copycat(ctx)
+
+@bot.command()
+async def uwu(ctx,text):
+    await features.uwu(ctx,text)
+
+@bot.command()
+async def hug(ctx):
+    await features.hug(ctx)
+
+@bot.command()
+async def setwikilang(ctx):
+    await features.setlang(ctx)
+
+@bot.command()
+async def wiki(ctx,search):
+    await features.wiki(ctx,search=search)
+
+@bot.command()
+async def randomwiki(ctx):
+    await features.randomwiki(ctx)
+
+@bot.command()
+async def fact(ctx):
+    await features.fact(ctx)
+
+@bot.command()
+async def blackjackinfo(ctx):
+    await features.blackjackinfo(ctx)
+
+@bot.command()
+async def blackjackstats(ctx):
+    await features.blackjackstats(ctx)
+
+@bot.command()
+async def blackjack(ctx):
+    await features.blackjack(ctx)
 
 # bot ideas:
 # yell at people if 3 people in a row say 'I' or '.'
@@ -255,8 +244,8 @@ async def on_message(message):
 
 t1 = time.time()
 
-client.loop.create_task(heartbeat())
-client.run(os.getenv('discordtoken'))
+bot.loop.create_task(heartbeat())
+bot.run(os.getenv('discordtoken'))
 
 # client.get_channel(745066591443746857).send('*System Restart*')
 # client.get_channel(745066591443746857).send('*Bot Online*')
