@@ -411,7 +411,7 @@ class Feature:
     async def uwu(message):
         uwu = message.content
         uwu = uwu.split()
-        uwu.remove('$uwuify')
+        uwu  = uwu[7:]
         uwuified = ''
         for i in range(len(uwu)):
 
@@ -450,9 +450,6 @@ class Feature:
         await message.channel.send(wiki_lang)
 
     async def wiki(message):
-
-        
-
         wiki_search = message.content
         wiki_search = wiki_search.split()
         wiki_search.remove('$wiki')
