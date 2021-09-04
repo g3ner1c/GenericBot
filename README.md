@@ -17,12 +17,13 @@
 -- awesomeplaya211
 
 ### _Required packages:_
-* asyncpraw
-* discord
-* matplotlib
-* numpy
-* uwuify
-* wikipedia
-* randfacts
-* scipy
-* dotenv
+* asyncpraw: pip install asyncpraw
+* discord: pip install discord
+* matplotlib: pip install matplotlib
+* numpy: pip install numpy
+* uwuify: pip install uwuify
+* wikipedia: pip install wikipedia
+* randfacts: pip install randfacts
+* scipy: pip install scipy
+* dotenv: pip install dotenv
+* discord-py-slash-command: pip install discord-py-slash-command
