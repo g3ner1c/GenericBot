@@ -16,7 +16,6 @@ import uwuify
 import wikipedia
 from discord import channel, message, player
 from discord.ext import commands, tasks
-from discord_slash import SlashCommand, SlashContext
 from randfacts import get_fact
 from scipy.interpolate import make_interp_spline
 from dotenv import load_dotenv
@@ -40,8 +39,8 @@ def txt_increment(text_file):
     file.write(str((num + 1)))
 
 @client.event
-async def on_ready(message):
-    await client.change_presence(activity=discord.Game(name="sussus amogus?"))
+async def on_ready():
+    await client.change_presence(activity=discord.Game(name="VScode for 12,021 years"))
     print('We have logged in as {0.user}'.format(client))
 
 async def heartbeat():
@@ -88,11 +87,11 @@ async def on_message(message):
         txt_increment("stats.txt")
         with open('auth.pckl', 'rb+') as file:
             auth = pickle.load(file)
-        if message.author not in auth:
-            message.channel.send('You are not authorized. Run $help to authorize.')
-            return
-        else:
+            file.close()
+        if message.author in auth:
             pass
+        else:
+            message.channel.send('You are not authorized. Run $help to authorize.')
 
     if msg.startswith('$hello'):
         await features.hello(message)

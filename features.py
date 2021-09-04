@@ -17,7 +17,6 @@ import uwuify
 import wikipedia
 from discord import channel, message, player
 from discord.ext import commands, tasks
-from discord_slash import SlashCommand, SlashContext
 from randfacts import get_fact
 from scipy.interpolate import make_interp_spline
 from dotenv import load_dotenv
@@ -395,9 +394,9 @@ class Feature:
             await message.channel.send("You're not my dev! >:(")
             print(message.author, 'attempted to kill bot')
             
-    async def help(message):
-        await message.channel.send('$info - information about me\n$github - my github page\n$status - bot status\n$invite - add me to your server\n$flip - flips a coin\n$8ball - 100% accurate answer to any question\n$rps - Rock Paper Scissors\n$hmm - hmm\n$kill - kills me **dont do this plz :C**')
-        await message.channel.send('$secret - its a secret! >_<\n$uwuify - UWU\n$stats - statistics\n$hug - hugs :D\n$blackjack - play me in blackjack!\n$blackjackstats - blackjack stats!\n$wiki - search wikipedia\n$fact - tell you a random fact\n$ping - latency test\n$netgraph - latency graph\n$art - top 100 post from r/art from the past week\n$cat - top 100 post from r/cats from the past week\n$shitpost or $196 - shitpost generator (sourced from Johnny Boy#4966 and various shitpost subreddits)')
+#    async def help(message):
+#        await message.channel.send('$info - information about me\n$github - my github page\n$status - bot status\n$invite - add me to your server\n$flip - flips a coin\n$8ball - 100% accurate answer to any question\n$rps - Rock Paper Scissors\n$hmm - hmm\n$kill - kills me **dont do this plz :C**')
+#        await message.channel.send('$secret - its a secret! >_<\n$uwuify - UWU\n$stats - statistics\n$hug - hugs :D\n$blackjack - play me in blackjack!\n$blackjackstats - blackjack stats!\n$wiki - search wikipedia\n$fact - tell you a random fact\n$ping - latency test\n$netgraph - latency graph\n$art - top 100 post from r/art from the past week\n$cat - top 100 post from r/cats from the past week\n$shitpost or $196 - shitpost generator (sourced from Johnny Boy#4966 and various shitpost subreddits)')
           
     async def secret(message):
         await message.channel.send('https://media.tenor.com/images/7598d103a735d5568964e4967e42823d/tenor.gif')
