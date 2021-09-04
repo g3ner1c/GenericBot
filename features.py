@@ -35,7 +35,7 @@ reddit = asyncpraw.Reddit(
 
 
 def txt_increment(text_file):
-
+    
     file = open(text_file,"r+")
     num = file.readline()
     num = int(num.strip())
@@ -327,7 +327,7 @@ class Feature:
             await message.channel.send('Tails')
             
     async def ball(message):
-        await message.channel.send(random.choice(_8ball))
+        await message.channel.send(random.choice(Feature._8ball))
         
     async def rps(message):
 
@@ -371,7 +371,7 @@ class Feature:
             await message.channel.send(string)
             print(string)
 
-    async def status(message):
+    async def status(message, t1):
         t2 = time.time()
         await message.channel.send('*Bot Online*')
         string = 'Online for ' + str(math.floor((t2-t1)/3600)) + ' hours ' + str(math.floor(((t2-t1)%3600)/60)) + ' minutes '+ str(round((t2-t1)%60,3)) + ' seconds'
@@ -403,7 +403,7 @@ class Feature:
         await message.channel.send(message.content)
           
     async def uwu(message):
-        uwu = msg
+        uwu = message.content
         uwu = uwu.split()
         uwu.remove('$uwuify')
         uwuified = ''
@@ -436,9 +436,7 @@ class Feature:
 
     async def setlang(message):
 
-        
-
-        wiki_lang = msg
+        wiki_lang = message.content
         wiki_lang = wiki_lang.split()
         wikipedia.set_lang(wiki_lang[1])
         wiki_lang = 'Language set to ' + wikipedia.languages()[wiki_lang[1]]
@@ -449,7 +447,7 @@ class Feature:
 
         
 
-        wiki_search = msg
+        wiki_search = message.content
         wiki_search = wiki_search.split()
         wiki_search.remove('$wiki')
         wiki_search_param = ''

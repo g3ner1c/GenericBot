@@ -25,42 +25,42 @@ from features import Feature as features
 
 bot = commands.Bot(command_prefix='$')
 
-client = discord.Client()
+client = discord.Client(message)
 
 def txt_increment(text_file):
     
     file = open(text_file,"r+")
-    num = file.readline()
-    num = int(num.strip())
+    num = file.readline(message)
+    num = int(num.strip(message))
     file.truncate(0)
-    file.close()
+    file.close(message)
     file = open(text_file,"r+")
     file.write(str((num + 1)))
 
 @client.event
-async def on_ready():
+async def on_ready(message):
     await client.change_presence(activity=discord.Game(name="sussus amogus?"))
     print('We have logged in as {0.user}'.format(client))
 
-async def heartbeat():
+async def heartbeat(message):
 
     global ping_arr
     global time_ping
     ping_arr = np.array([])
 
-    await client.wait_until_ready()
-    while not client.is_closed():
+    await client.wait_until_ready(message)
+    while not client.is_closed(message):
 
         if len(ping_arr) < 16:
 
             ping_arr = np.append(ping_arr, int(round(client.latency * 1000,3)))
-            time_ping = time.time()
+            time_ping = time.time(message)
 
         else:
 
             ping_arr = np.delete(ping_arr, 0)
             ping_arr = np.append(ping_arr, int(round(client.latency * 1000,3)))
-            time_ping = time.time()
+            time_ping = time.time(message)
 
         await asyncio.sleep(40)
 
@@ -82,12 +82,13 @@ async def on_message(message):
 
     #     if rng == 0:
     #         await message.channel.send('**I am the better bot >:(**')
-    if msg.startswith('$') and len(msg) >= 2:
-        await features.txt_increment("stats.txt")
+    if msg.startswith('$') and len(msg) >= 2 and not msg == '$help':
+        txt_increment("stats.txt")
         with open('auth.pckl', 'rb+') as file:
             auth = pickle.load(file)
         if message.author not in auth:
             message.channel.send('You are not authorized. Run $help to authorize.')
+            return
         else:
             pass
 
@@ -140,10 +141,10 @@ async def on_message(message):
         await features.invite(message)
 
     if msg.startswith('$flip'):
-        await features.flip()
+        await features.flip(message)
 
     if msg.startswith('$8ball'):
-        await features.ball()
+        await features.ball(message)
 
     if msg.startswith('$rps'):
         await features.rps(message)
@@ -161,50 +162,50 @@ async def on_message(message):
     #     await message.channel.send('nice')
 
     # if any(word in msg for word in ['owo','OWO','uwu','UWU','oWo','uWu','UwU','OwO']) and message.author.id != 545025575295909899 and not msg.startswith('$uwuify'):
-    #     # time_uwu = time.time()
+    #     # time_uwu = time.time(message)
     #     await message.channel.send('uwu')
 
     if any(word in msg for word in ['mai san','maisan','MAI SAN','MAISAN','mai-san','Mai-san','MAI-SAN']):
-        await features.mai()
+        await features.mai(message)
 
     if msg.startswith('$status'):
-        await features.stats()
+        await features.stats(message, t1)
     
     if msg.startswith('$hmm'):
-        await features.hmm()
+        await features.hmm(message)
 
     if msg.startswith('$kill'):
-        await features.kill()
+        await features.kill(message)
 
     if msg.startswith('$help'):
-        await features.help()
+        await features.help(message)
     
     if msg.startswith('$secret'):
-        await features.secret()
+        await features.secret(message)
     
     if msg.startswith('$copycat'):
-        await features.copycat()
+        await features.copycat(message)
     
     if msg.startswith('$uwuify'):
-        await features.uwu()
+        await features.uwu(message)
     
     if msg.startswith('$stats'):
-        await features.stats()
+        await features.stats(message)
 
     if msg.startswith('$hug'):
-        await features.hug()
+        await features.hug(message)
 
     if msg.startswith('$setwikilang'):
-        await features.setlang()
+        await features.setlang(message)
 
     if msg.startswith('$wiki'):
-        await features.wiki()
+        await features.wiki(message)
 
     if msg.startswith('$randomwikipage'):
-        await features.randomwiki()
+        await features.randomwiki(message)
 
     if msg.startswith('$fact'):
-        await features.fact()
+        await features.fact(message)
 
     # if msg.startswith('$spotify'):
     #     print('made it here')
@@ -218,13 +219,13 @@ async def on_message(message):
     #             print('made it here')
 
     if msg == '$blackjackinfo':
-        await features.blackjackinfo()
+        await features.blackjackinfo(message)
 
     if msg == '$blackjackstats':
-        await features.blackjackstats()
+        await features.blackjackstats(message)
 
     if msg == '$blackjack': 
-        await features.blackjack()
+        await features.blackjack(message)
 
 # bot ideas:
 # yell at people if 3 people in a row say 'I' or '.'
@@ -237,7 +238,7 @@ async def on_message(message):
 # <= 16 bot takes >= 17 bot stands
 
 
-# @bot.command()
+# @bot.command(message)
 # async def spotify(ctx, user: discord.Member=None):
 #     print('made it here')
 #     user = user or ctx.author
@@ -252,7 +253,7 @@ async def on_message(message):
 
 t1 = time.time()
 
-client.loop.create_task(heartbeat())
+client.loop.create_task(heartbeat(message))
 client.run(os.getenv('discordtoken'))
 
 # client.get_channel(745066591443746857).send('*System Restart*')
