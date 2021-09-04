@@ -2,7 +2,7 @@
 ### __Multipurpose Discord bot created by awesomeplaya211#4051 (@awesomeplaya211)__
 ### __with contributions by @Banshee-72__
 
-### __Suggestions and pull requests are welcome__
+### __Suggestions and push requests are welcome__
 
 # TODO LIST:
 ## Features:
