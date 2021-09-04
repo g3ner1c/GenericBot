@@ -91,7 +91,8 @@ async def on_message(message):
         if message.author in auth:
             pass
         else:
-            message.channel.send('You are not authorized. Run $help to authorize.')
+            await message.channel.send('You are not authorized. Run $help to authorize.')
+            return
 
     if msg.startswith('$hello'):
         await features.hello(message)
@@ -170,7 +171,7 @@ async def on_message(message):
         await features.mai(message)
 
     if msg.startswith('$status'):
-        await features.stats(message, t1)
+        await features.status(message, t1)
     
     if msg.startswith('$hmm'):
         await features.hmm(message)
