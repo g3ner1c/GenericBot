@@ -1,6 +1,6 @@
 # RockyBot
 ### __Multipurpose Discord bot created by awesomeplaya211#4051 (@awesomeplaya211)__
-### __with contributions by @Banshee-72
+### __with contributions by @Banshee-72__
 
 ### __Suggestions and pull requests are welcome__
 
