@@ -9,7 +9,7 @@
 * Create translate feature
 * Create read feature
 * Create help feature
-* Create graphing feature
+* Debug graphing feature
 ## Optimizations:
 * Clean up code + comment
 * General optimizations
