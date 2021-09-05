@@ -287,7 +287,7 @@ class Feature:
     #                                                vvvvvvvv
 
     async def info(ctx):
-        await ctx.send('*RockyBot v1.2.2 - dev*\nHi! I am an emotionless bot programmed to feign a personality to you!\nMy owner is awesomeplaya211#4051\nDM him for bug reports or suggestions\nNotable contributions (@Banshee-72 on GitHub)\n**I am now open source!**\n**Use $github for my Github page!**\nProfile picture by Johnny Boy#4966')
+        await ctx.send('*RockyBot v1.2.2 - ctx-dev*\nHi! I am an emotionless bot programmed to feign a personality to you!\nMy owner is awesomeplaya211#4051\nDM him for bug reports or suggestions\nNotable contributions (@Banshee-72 on GitHub)\n**I am now open source!**\n**Use $github for my Github page!**\nProfile picture by Johnny Boy#4966')
         
     async def pfp(ctx):
 
