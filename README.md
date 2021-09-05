@@ -1,18 +1,19 @@
 # RockyBot
 ### __Multipurpose Discord bot created by awesomeplaya211#4051 (@awesomeplaya211)__
-### __with contributions by (@Banshee-72)__
+### __with contributions by @Banshee-72__
 
-### __Suggestions and pull requests are welcome__
+### __Suggestions and push requests are welcome__
 
 # TODO LIST:
 ## Features:
 * Create translate feature
 * Create read feature
 * Create help feature
-* Create graphing feature
+* Debug graphing feature
 ## Optimizations:
 * Clean up code + comment
 * General optimizations
+* Migrate to ctx + create cog for features
 
 -- awesomeplaya211
 
