@@ -13,6 +13,7 @@
 ## Optimizations:
 * Clean up code + comment
 * General optimizations
+* Migrate to ctx + create cog for features
 
 -- awesomeplaya211
 
