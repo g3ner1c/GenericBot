@@ -17,10 +17,11 @@ from discord.ext import commands
 from randfacts import get_fact
 from scipy.interpolate import make_interp_spline
 from dotenv import load_dotenv
+from discord_slash import SlashCommand
 
 load_dotenv()
 
-bot = commands.Bot(command_prefix='$')
+bot = discord.Client(intents=discord.Intents.default())
 
 global channel_say
 channel_say = 0
@@ -28,6 +29,9 @@ channel_say = 0
 client = discord.Client()
 global time_uwu
 time_uwu = time.time()
+
+slash = SlashCommand(bot, sync_commands=True)
+
 
 reddit = asyncpraw.Reddit(
     client_id="MZgXIeYJm5rsrFHm9uWCeA",
@@ -115,13 +119,13 @@ _8ball = ["Certainly yes", "Definentely Yes", "99.9% chance", "The chances are h
         
         ]
 
-@bot.command()
+@slash.slash(name="license")
 async def license(ctx,page):
         license  = 'Copyright © 2021 awesomeplaya211 & Banshee-72 \n Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: \n The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. \nTHE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.'
         await ctx.send('By using the bot you agree to the following license:')
         await ctx.send(license)
 
-@bot.command()
+@slash.slash(name="graphing")
 async def graphing(ctx, subst, equ):
         mequ = equ
         x = np.linspace(-125, 125, 2501)
@@ -148,21 +152,21 @@ async def graphing(ctx, subst, equ):
         await ctx.send(embed=embed, file=file)
         plt.clf()
 
-@bot.command()
+@slash.slash(name="hello")
 async def hello(ctx):
         await ctx.send('Hello!')
 
-@bot.command()
+@slash.slash(name="say")
 async def say(ctx,term):
         if ctx.author.id == 538921994645798915:
 
             await channel_say.send(term)
 
-@bot.command()
+@slash.slash(name="test")
 async def test(ctx):
         await ctx.send(ctx.author)
 
-@bot.command()
+@slash.slash(name="art")
 async def art(ctx):
         
         subreddit = await reddit.subreddit("art")
@@ -184,7 +188,7 @@ async def art(ctx):
         await ctx.send('Posted by u/'+reddit_post.author.name)
         await ctx.send(str(reddit_post.score)+' upvotes')
 
-@bot.command()
+@slash.slash(name="cat")
 async def cat(ctx):
         
         subreddit = await reddit.subreddit("cats")
@@ -206,7 +210,7 @@ async def cat(ctx):
         await ctx.send('Posted by u/'+reddit_post.author.name)
         await ctx.send(str(reddit_post.score)+' upvotes')
 
-@bot.command()
+@slash.slash(name="sp")
 async def sp(ctx):
         # https://cdn.discordapp.com/attachments/745066591443746857/879558411895848960/anime-couples.png
             
@@ -215,7 +219,7 @@ async def sp(ctx):
                 lines = file.readlines()
                 await ctx.send(random.choice(lines))
 
-@bot.command()
+@slash.slash(name="truth")
 async def truth(ctx):
         
         with open("truth.txt") as file:
@@ -223,18 +227,18 @@ async def truth(ctx):
             lines = file.readlines()
             await ctx.send(random.choice(lines))
 
-@bot.command()
+@slash.slash(name="calc")
 async def calc(ctx,equ):
 
 
         
         await ctx.send(str(eval(equ)))
        
-@bot.command()
+@slash.slash(name="ping")
 async def ping(ctx):
         await ctx.send(f'Pong! Latency: {round(client.latency * 1000, 3)}ms')
          
-@bot.command()
+@slash.slash(name="netgraph")
 async def netgraph(ctx):
         
 
@@ -274,11 +278,11 @@ async def netgraph(ctx):
     #                               put repo branch in $info here for easier testing
     #                                                vvvvvvvv
 
-@bot.command()
+@slash.slash(name="info")
 async def info(ctx):
         await ctx.send('*RockyBot v1.2.2 - ctx-dev*\nHi! I am an emotionless bot programmed to feign a personality to you!\nMy owner is awesomeplaya211#4051\nDM him for bug reports or suggestions\nNotable contributions (@Banshee-72 on GitHub)\n**I am now open source!**\n**Use $github for my Github page!**\nProfile picture by Johnny Boy#4966')
         
-@bot.command()
+@slash.slash(name="pfp")
 async def pfp(ctx):
 
         file = discord.File("pfp.jpg") # an image in the same folder as the main bot file
@@ -287,17 +291,17 @@ async def pfp(ctx):
         # filename and extension have to match (ex. "thisname.jpg" has to be "attachment://thisname.jpg")
         await ctx.send(embed=embed, file=file)
 
-@bot.command()
+@slash.slash(name="github")
 async def github(ctx):
         
         await ctx.send('https://github.com/awesomeplaya211/RockyBot')
 
-@bot.command()
+@slash.slash(name="invite")
 async def invite(ctx):
         await ctx.send('Add me to your server!')
         await ctx.send('https://discord.com/api/oauth2/authorize?client_id=866481377151156304&permissions=2148002880&scope=bot')
         
-@bot.command()
+@slash.slash(name="flip")
 async def flip(ctx):
 
         if bool(random.randint(0,1)):
@@ -307,11 +311,11 @@ async def flip(ctx):
         else:
             await ctx.send('Tails')
             
-@bot.command()
+@slash.slash(name="ball")
 async def ball(ctx):
         await ctx.send(random.choice(_8ball))
         
-@bot.command()
+@slash.slash(name="rps")
 async def rps(ctx,choice):
 
         if choice == 'rock': choice = 0
@@ -338,22 +342,22 @@ async def rps(ctx,choice):
         else:
             await ctx.send('I call hacks')
             
-@bot.command()
+@slash.slash(name="gm")
 async def gm(message):
 
         await message.channel.send('Good morning!')
         
-@bot.command()
+@slash.slash(name="gn")
 async def gn(message):
 
        await message.channel.send('Good night!')
        
-@bot.command()
+@slash.slash(name="gg")
 async def gg(message):
 
        await message.channel.send('Good game!')
        
-@bot.command()
+@slash.slash(name="mai")
 async def mai(message):
         
         
@@ -369,18 +373,18 @@ async def mai(message):
             await message.channel.send(string)
             print(string)
 
-@bot.command()
+@slash.slash(name="status")
 async def status(ctx, t1):
         t2 = time.time()
         await ctx.send('*Bot Online*')
         string = 'Online for ' + str(math.floor((t2-t1)/3600)) + ' hours ' + str(math.floor(((t2-t1)%3600)/60)) + ' minutes '+ str(round((t2-t1)%60,3)) + ' seconds'
         await ctx.send(string)
           
-@bot.command()
+@slash.slash(name="hmm")
 async def hmm(ctx):
         await ctx.send('https://i.pinimg.com/originals/15/8b/ed/158bed9819e4fccf7e18a5eeeaf79c6b.png')
         
-@bot.command()
+@slash.slash(name="kill")
 async def kill(ctx):
 
         if ctx.author == 538921994645798915:
@@ -392,22 +396,22 @@ async def kill(ctx):
             await ctx.send("You're not my dev! >:(")
             print(ctx.author, 'attempted to kill bot')
             
-#@bot.command()
+#@slash.slash(name="")
 #async def help(ctx):
 #        await ctx.send('$info - information about me\n$github - my github page\n$status - bot status\n$invite - add me to your server\n$flip - flips a coin\n$8ball - 100% accurate answer to any question\n$rps - Rock Paper Scissors\n$hmm - hmm\n$kill - kills me **dont do this plz :C**')
 #        await ctx.send('$secret - its a secret! >_<\n$uwuify - UWU\n$stats - statistics\n$hug - hugs :D\n$blackjack - play me in blackjack!\n$blackjackstats - blackjack stats!\n$wiki - search wikipedia\n$fact - tell you a random fact\n$ping - latency test\n$netgraph - latency graph\n$art - top 100 post from r/art from the past week\n$cat - top 100 post from r/cats from the past week\n$shitpost or $196 - shitpost generator (sourced from Johnny Boy#4966 and various shitpost subreddits)')
           
-@bot.command()
+@slash.slash(name="secret")
 async def secret(ctx):
         await ctx.send('https://media.tenor.com/images/7598d103a735d5568964e4967e42823d/tenor.gif')
         time.sleep(3)
         await ctx.send('lol baited')
           
-@bot.command()
+@slash.slash(name="copycat")
 async def copycat(ctx):
         await ctx.send(ctx)
           
-@bot.command()
+@slash.slash(name="uwu")
 async def uwu(ctx,text):
         uwu  = text
         uwuified = ''
@@ -424,7 +428,7 @@ async def uwu(ctx,text):
         uwuified = uwuify.uwu(uwuified)
         await ctx.send(uwuified + 'uwu')
          
-@bot.command()
+@slash.slash(name="stats")
 async def stats(ctx):
 
         file = open("stats.txt","r+")
@@ -433,12 +437,12 @@ async def stats(ctx):
         string_stat = 'I have been called '+ str(stat) + ' times'
         await ctx.send(string_stat)
 
-@bot.command()
+@slash.slash(name="hug")
 async def hug(ctx):
 
         await ctx.send('⊂(・▽・⊂)')
 
-@bot.command()
+@slash.slash(name="setlang")
 async def setlang(ctx,lang):
         wiki_lang = lang
         wiki_lang = wiki_lang.split()
@@ -447,7 +451,7 @@ async def setlang(ctx,lang):
 
         await ctx.send(wiki_lang)
 
-@bot.command()
+@slash.slash(name="wiki")
 async def wiki(ctx,search):
         wiki_search = search
         wiki_search = wiki_search.split()
@@ -474,19 +478,19 @@ async def wiki(ctx,search):
             await ctx.send('***Did you mean ' + wikipedia.page(wiki_search_param, auto_suggest = True).title + '?***')
             await ctx.send(wikipedia.page(wiki_search_param, auto_suggest = True).url)
 
-@bot.command()
+@slash.slash(name="randomwiki")
 async def randomwiki(ctx):
 
         
         await ctx.send(wikipedia.page(wikipedia.random()).url)
 
-@bot.command()
+@slash.slash(name="fact")
 async def fact(ctx):
 
         
         await ctx.send(get_fact())
 
-@bot.command()
+@slash.slash(name="blackjackinfo")
 async def blackjackinfo(ctx):
 
         await ctx.send('*Blackjack* also known as *Twenty-One* or *Vingt-et-un* is the most popular casino game in the world where the objective is to get a value of 21.')
@@ -498,7 +502,7 @@ async def blackjackinfo(ctx):
         await ctx.send('Have fun!')
         await ctx.send('*Note: RockyBot does not support underage gambling, play responsibly*')
 
-@bot.command()
+@slash.slash(name="blackjackstats")
 async def blackjackstats(ctx):
 
         file = open("blackjackstats.txt","r+")
@@ -510,7 +514,7 @@ async def blackjackstats(ctx):
 
         await ctx.send(string_stat)
 
-@bot.command()
+@slash.slash(name="blackjack")
 async def blackjack(ctx): 
 
         
@@ -754,9 +758,6 @@ async def blackjack(ctx):
                         blackjack_increment("blackjackstats.txt", 2)
                         
                         break
-
-
-
 
 
 
