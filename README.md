@@ -27,3 +27,4 @@
 * randfacts
 * scipy
 * dotenv
+* pyowm
