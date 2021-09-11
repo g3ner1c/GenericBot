@@ -4,7 +4,6 @@ import os
 import random
 import re
 import time
-import re
 
 import asyncpraw
 import discord
@@ -14,9 +13,10 @@ import uwuify
 import wikipedia
 from discord import channel, message, player
 from discord.ext import commands
+from dotenv import load_dotenv
+from pyowm.owm import OWM
 from randfacts import get_fact
 from scipy.interpolate import make_interp_spline
-from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -117,12 +117,13 @@ _8ball = ["Certainly yes", "Definentely Yes", "99.9% chance", "The chances are h
         ]
 
 @bot.command()
-async def license(ctx,page):
+async def license(ctx):
     license  = 'Copyright © 2021 awesomeplaya211 & Banshee-72 \n Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: \n The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. \nTHE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.'
     await ctx.send('By using the bot you agree to the following license:')
     await ctx.send(license)
 
 @bot.command()
+# buggy lmao
 async def graphing(ctx, subst, equ):
     mequ = equ
     x = np.linspace(-125, 125, 2501)
@@ -165,7 +166,8 @@ async def test(ctx):
 
 @bot.command()
 async def art(ctx):
-        
+    
+    txt_increment("stats.txt")
     subreddit = await reddit.subreddit("art")
 
     post_list = []
@@ -188,6 +190,7 @@ async def art(ctx):
 @bot.command()
 async def cat(ctx):
         
+    txt_increment("stats.txt")
     subreddit = await reddit.subreddit("cats")
 
     post_list = []
@@ -201,11 +204,43 @@ async def cat(ctx):
             post_list.append(submission)
             count += 1
 
+
     reddit_post = random.choice(post_list)
     await ctx.send(reddit_post.title)
     await ctx.send(reddit_post.url)
     await ctx.send('Posted by u/'+reddit_post.author.name)
     await ctx.send(str(reddit_post.score)+' upvotes')
+
+
+@bot.command()
+async def news(ctx):
+
+    txt_increment("stats.txt")
+    subreddit = await reddit.subreddit("news")
+
+    post_list = []
+
+    count = 0
+    async for submission in subreddit.hot():
+        if count == 10:
+            break
+        if submission.over_18 == False:
+            # post_url = 'https://www.reddit.com'+submission.permalink
+            post_list.append(submission)
+            count += 1
+
+    num = 0
+    embed = discord.Embed()
+    embedstr = ''
+    for post in post_list:
+        
+        num += 1
+        redditstr = str(num) + ') [' + post.title + '](' + post.url + ')\n\n'
+        embedstr += redditstr
+
+    embed.description = embedstr
+    await ctx.channel.send(embed=embed)
+
 
 @bot.command()
 async def sp(ctx):
@@ -271,6 +306,72 @@ async def netgraph(ctx):
     # filename and extension have to match (ex. "thisname.jpg" has to be "attachment://thisname.jpg")
     await ctx.send(embed=embed, file=file)
     plt.clf()
+
+
+@bot.command()
+async def weather(ctx, *, location):
+    txt_increment("stats.txt")
+    owm = OWM('a4348bddc4faa37365b82cee8c3136da')
+    mgr = owm.weather_manager()
+    observation = mgr.weather_at_place(location)  # the observation object is a box containing a weather object
+    w = observation.weather
+
+    reg = owm.city_id_registry()
+    list_of_locations = reg.locations_for(location)
+
+
+    # embedVar = discord.Embed(title="Weather in " + location + ' (Latitude:' + str(list_of_locations[0].lat) + ', Longitude:' + str(list_of_locations[0].lon) + ')', color=0xff3131)
+
+    embedVar = discord.Embed(title="Weather in " + location, color=0xff3131) # <-- color of RockyBot role on ***REMOVED*** Server
+
+    embedVar.add_field(name="Current Temperature", value=str(w.temperature('fahrenheit')['temp']) + ' °F / ' + str(w.temperature('celsius')['temp']) + ' °C', inline=False)
+    embedVar.add_field(name="High", value=str(w.temperature('fahrenheit')['temp_max']) + ' °F / ' + str(w.temperature('celsius')['temp_max']) + ' °C', inline=False)
+    embedVar.add_field(name="Low", value=str(w.temperature('fahrenheit')['temp_min']) + ' °F / ' + str(w.temperature('celsius')['temp_min']) + ' °C', inline=False)
+    embedVar.add_field(name="Feels like", value=str(w.temperature('fahrenheit')['feels_like']) + ' °F / ' + str(w.temperature('celsius')['feels_like']) + ' °C', inline=False)
+
+    embedVar.add_field(name="Wind Speed", value=str(w.wind()['speed']) + ' m/s', inline=False)
+    
+    embedVar.add_field(name='Humidity', value=str(w.humidity) + '%', inline=False)
+
+    embedVar.add_field(name='Air Pressure', value=str(w.pressure['press']) + ' hPa', inline=False)
+
+    await ctx.send(embed=embedVar)
+
+    _3h_forecast = mgr.forecast_at_place(location, '3h').forecast
+    forecast_temps = np.array([])
+    for weather in _3h_forecast:
+
+        forecast_temps = np.append(forecast_temps, weather.temperature('fahrenheit')['temp'])
+
+
+    x = np.arange(3,121,3)
+    y = forecast_temps
+
+    plt.plot(x,y, color = 'red')
+
+    plt.xlim(0, 120)
+
+    plt.ylim(min(y)*0.9, max(y)*1.1)
+
+    plt.xlabel('Hours into the future')
+
+    plt.ylabel('Temperature in Fahrenheit(°F)')
+
+    plt.title('3 Hour Interval Forecast at ' + location)
+
+    plt.savefig("forecast.png")
+
+
+
+
+    file = discord.File("forecast.png") # an image in the same folder as the main bot file
+    embed = discord.Embed() # any kwargs you want here
+    embed.set_image(url="attachment://forecast.png")
+    # filename and extension have to match (ex. "thisname.jpg" has to be "attachment://thisname.jpg")
+    await ctx.send(embed=embed, file=file)
+    plt.clf()
+
+
 
 #                               put repo branch in $info here for easier testing
 #                                                vvvvvvvv
@@ -339,39 +440,45 @@ async def rps(ctx,choice):
     else:
         await ctx.send('I call hacks')
             
-@bot.command()
-async def gm(message):
-
-    await message.channel.send('Good morning!')
-        
-@bot.command()
-async def gn(message):
-
-    await message.channel.send('Good night!')
        
-@bot.command()
-async def gg(message):
+@bot.event
+async def on_message(ctx):
 
-    await message.channel.send('Good game!')
-       
-@bot.command()
-async def mai(message):
-        
-        
-    file = open("time.txt","r+")
-    ltm = float(file.readline().strip())
-    now = time.time()
-    file.truncate(0)
-    file.close()
-    file = open("time.txt","r+")
-    file.write(str(now))
-    if now - ltm > 600:
-        string = '*This server has gone ' + str((now - ltm)//86400) + ' days ' + str(((now - ltm)%86400)//3600) + ' hours ' + str(((now - ltm)%3600)//60) + ' minutes '+ str(round((now - ltm)%60)) + ' seconds without mentioning Mai-san*'
-        await message.channel.send(string)
-        print(string)
+    await bot.process_commands(ctx)
+
+    if ctx.author == bot.user:   
+        return
+
+    if (ctx.content.startswith('gm') or ctx.content.startswith('GM') or ctx.content.startswith('good morning') or ctx.content.startswith('Good morning')) and (ctx.content != 'gmas') and (ctx.content != 'GMAS'):
+
+        await ctx.channel.send('Good morning!')
+        txt_increment("stats.txt")
+
+    if ctx.content.startswith('gn') or ctx.content.startswith('GN') or ctx.content.startswith('good night') or ctx.content.startswith('Good night'):
+
+       await ctx.channel.send('Good night!')
+       txt_increment("stats.txt")
+
+    if ctx.content.startswith('gg') or ctx.content.startswith('GG'):
+
+       await ctx.channel.send('Good game!')
+       txt_increment("stats.txt")
+
+    if any(word in ctx.content for word in ['mai san','maisan','MAI SAN','MAISAN','mai-san','Mai-san','MAI-SAN']):   
+        file = open("time.txt","r+")
+        ltm = float(file.readline().strip())
+        now = time.time()
+        file.truncate(0)
+        file.close()
+        file = open("time.txt","r+")
+        file.write(str(now))
+        if now - ltm > 600:
+            string = '*This server has gone ' + str((now - ltm)//86400) + ' days ' + str(((now - ltm)%86400)//3600) + ' hours ' + str(((now - ltm)%3600)//60) + ' minutes '+ str(round((now - ltm)%60)) + ' seconds without mentioning Mai-san*'
+            await ctx.channel.send(string)
+            print(string)
 
 @bot.command()
-async def status(ctx, t1):
+async def status(ctx):
     t2 = time.time()
     await ctx.send('*Bot Online*')
     string = 'Online for ' + str(math.floor((t2-t1)/3600)) + ' hours ' + str(math.floor(((t2-t1)%3600)/60)) + ' minutes '+ str(round((t2-t1)%60,3)) + ' seconds'
@@ -409,6 +516,7 @@ async def copycat(ctx):
     await ctx.send(ctx)
           
 @bot.command()
+#debug
 async def uwu(ctx,text):
     uwu  = text
     uwuified = ''
@@ -441,25 +549,18 @@ async def hug(ctx):
 
 @bot.command()
 async def setlang(ctx,lang):
-    wiki_lang = lang
-    wiki_lang = wiki_lang.split()
-    wikipedia.set_lang(wiki_lang[1])
-    wiki_lang = 'Language set to ' + wikipedia.languages()[wiki_lang[1]]
+
+    wikipedia.set_lang(lang)
+    wiki_lang = 'Language set to ' + wikipedia.languages()[lang]
 
     await ctx.send(wiki_lang)
 
 @bot.command()
-async def wiki(ctx,search):
-    wiki_search = search
-    wiki_search = wiki_search.split()
-    wiki_search.remove('$wiki')
-    wiki_search_param = ''
+async def wiki(ctx, *, search):
 
-    for i in wiki_search:
+    # IMPORTANT!:  ^^^ asterisk will make the str after command into 1 arg regardless of spaces
 
-        wiki_search_param += i + ' '
-
-    wiki_search_param = wiki_search_param.strip()
+    wiki_search_param = search
 
     wiki_search_str = '*Searching Wikipedia for ' + wiki_search_param + '*'
 
@@ -637,8 +738,8 @@ async def blackjack(ctx):
 
     else:
 
-        def is_correct(_msg):
-            return _msg.author == message.author
+        def is_correct(_ctx):
+            return _ctx.author == ctx.author
 
         while True:
 
