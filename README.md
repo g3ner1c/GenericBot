@@ -1,4 +1,4 @@
-# RockyBot
+# RockyBot v1.3.0
 ### __Multipurpose Discord bot created by awesomeplaya211#4051 (@awesomeplaya211)__
 ### __with contributions by @Banshee-72__
 
@@ -13,7 +13,7 @@
 ## Optimizations:
 * Clean up code + comment
 * General optimizations
-* Migrate to ctx + create cog for features
+* Create cog for features
 
 -- awesomeplaya211
 
