@@ -535,7 +535,7 @@ async def uwu(ctx,text):
          
 @bot.command()
 async def stats(ctx):
-
+    txt_increment("stats.txt")
     file = open("stats.txt","r+")
     stat = file.readline()
     stat = int(stat.strip())
