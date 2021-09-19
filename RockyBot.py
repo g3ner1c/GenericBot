@@ -1,3 +1,17 @@
+from flask import Flask
+from threading import Thread
+app = Flask('')
+@app.route('/')
+def main(): 
+    return "Running"
+
+def run():
+    app.run(host="0.0.0.0", port=8000)
+
+def keep_alive():
+    server = Thread(target=run)
+    server.start()
+
 import asyncio
 import math
 import os
@@ -17,6 +31,7 @@ from dotenv import load_dotenv
 from pyowm.owm import OWM
 from randfacts import get_fact
 from scipy.interpolate import make_interp_spline
+
 
 load_dotenv()
 
@@ -535,7 +550,7 @@ async def uwu(ctx,text):
          
 @bot.command()
 async def stats(ctx):
-
+    txt_increment("stats.txt")
     file = open("stats.txt","r+")
     stat = file.readline()
     stat = int(stat.strip())
@@ -889,6 +904,9 @@ async def blackjack(ctx):
 t1 = time.time()
 
 bot.loop.create_task(heartbeat())
+
+keep_alive()
+
 bot.run(os.getenv('discordtoken'))
 
 # client.get_channel(745066591443746857).send('*System Restart*')
