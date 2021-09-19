@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 from pyowm.owm import OWM
 from randfacts import get_fact
 from scipy.interpolate import make_interp_spline
-
+from keep_alive import keep_alive
 
 load_dotenv()
 
