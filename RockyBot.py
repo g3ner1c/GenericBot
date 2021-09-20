@@ -17,6 +17,7 @@ from dotenv import load_dotenv
 from pyowm.owm import OWM
 from randfacts import get_fact
 from scipy.interpolate import make_interp_spline
+from keep_alive import keep_alive
 
 load_dotenv()
 
@@ -889,6 +890,9 @@ async def blackjack(ctx):
 t1 = time.time()
 
 bot.loop.create_task(heartbeat())
+
+keep_alive()
+
 bot.run(os.getenv('discordtoken'))
 
 # client.get_channel(745066591443746857).send('*System Restart*')
