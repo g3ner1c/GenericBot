@@ -161,6 +161,11 @@ async def say(ctx,term):
 
         await channel_say.send(term)
 
+async def dm(ctx, user: discord.User,*,message):
+    if ctx.author.id == 538921994645798915:
+
+        await user.send(message)
+
 @bot.command()
 async def test(ctx):
     await ctx.send(ctx.author)
@@ -272,7 +277,7 @@ async def exec(ctx, *, command):
     if ctx.author.id == 538921994645798915:
         
         exec(command)
-    
+
     else:
         await ctx.send("You're not my dev! >:(")
         print(ctx.author, 'attempted to execute:\n', ctx.content)
