@@ -161,6 +161,7 @@ async def say(ctx,term):
 
         await channel_say.send(term)
 
+@bot.command()
 async def dm(ctx, user: discord.User,*,message):
     if ctx.author.id == 538921994645798915:
 
