@@ -260,12 +260,22 @@ async def truth(ctx):
         lines = file.readlines()
         await ctx.send(random.choice(lines))
 
+# @bot.command()
+# async def calc(ctx,equ):
+#     await ctx.send(str(eval(equ)))
+
+# too complicated ^
+
 @bot.command()
-async def calc(ctx,equ):
+async def exec(ctx, *, command):
 
-
+    if ctx.author.id == 538921994645798915:
+        
+        exec(command)
     
-    await ctx.send(str(eval(equ)))
+    else:
+        await ctx.send("You're not my dev! >:(")
+        print(ctx.author, 'attempted to execute:\n', ctx.content)
        
 @bot.command()
 async def ping(ctx):
