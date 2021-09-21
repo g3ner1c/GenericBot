@@ -147,6 +147,7 @@ async def bot_status():
 @bot.event
 async def on_ready():
     print('Logged in as {0.user}'.format(bot), ' - ', bot.user.id)
+    bot.loop.create_task(bot_status())
     
 
 
@@ -950,7 +951,6 @@ async def blackjack(ctx):
 t1 = time.time()
 
 bot.loop.create_task(heartbeat())
-bot.loop.create_task(bot_status())
 
 keep_alive()
 
