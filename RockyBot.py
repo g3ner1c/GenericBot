@@ -90,7 +90,7 @@ async def heartbeat():
         await asyncio.sleep(40)
 
 
-@loop(seconds=10)
+@tasks.loop(seconds=10)
 async def bot_status():
 
     # Setting `Playing ` status
