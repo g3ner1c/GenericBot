@@ -90,54 +90,53 @@ async def heartbeat():
         await asyncio.sleep(40)
 
 
-@tasks.loop(seconds=10)
-async def bot_status():
 
-    # Setting `Playing ` status
-    # await bot.change_presence(activity=discord.Game(name="a game"))
+# Setting `Playing ` status
+# await bot.change_presence(activity=discord.Game(name="a game"))
 
-    # Setting `Streaming ` status
-    # await bot.change_presence(activity=discord.Streaming(name="My Stream", url=my_twitch_url))
+# Setting `Streaming ` status
+# await bot.change_presence(activity=discord.Streaming(name="My Stream", url=my_twitch_url))
 
-    # Setting `Listening ` status
-    # await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="a song"))
+# Setting `Listening ` status
+# await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="a song"))
 
-    # Setting `Watching ` status
-    # await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="a movie"))
+# Setting `Watching ` status
+# await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="a movie"))
 
-    statuses = ["await bot.change_presence(activity=discord.Game(name='Visual Studio Code'))",
-                "await bot.change_presence(activity=discord.Game(name='Team Fortress 2'))",
-                "await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='The Bee Movie'))",
-                "await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name='to your VCs ( ͡° ͜ʖ ͡°)'))",
-                "await bot.change_presence(activity=discord.Game(name='Factorio'))",
-                "await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='Bunny Girl Senpai'))",
-                "await bot.change_presence(activity=discord.Game(name='Node.js'))",
-                "await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='xQcOW'))",
-                "await bot.change_presence(activity=discord.Game(name='Minecraft'))",
-                "await bot.change_presence(activity=discord.Game(name='with your mom'))",
-                "await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='Everyone'))",
-                "await bot.change_presence(activity=discord.Game(name='osu!'))",
-                "await bot.change_presence(activity=discord.Game(name='Genshin Impact'))",
-                "await bot.change_presence(activity=discord.Game(name='Titanfall 2'))",
-                "await bot.change_presence(activity=discord.Game(name='x86 Assembly'))",
-                "await bot.change_presence(activity=discord.Game(name='SCP Containment Breach'))",
-                "await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='Kobayashi's Dragon Maid'))",
-                "await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='Wikipedia'))",
-                "await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='r/furry_irl'))",
-                "await bot.change_presence(activity=discord.Game(name='Hypixel Skywars'))"
-                ]
-
-    statusNum = random.randint(0, len(statuses))
-    exec(statuses[statusNum])
-
-
+statuses = ["await bot.change_presence(activity=discord.Game(name='Visual Studio Code'))",
+            "await bot.change_presence(activity=discord.Game(name='Team Fortress 2'))",
+            "await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='The Bee Movie'))",
+            "await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name='to your VCs ( ͡° ͜ʖ ͡°)'))",
+            "await bot.change_presence(activity=discord.Game(name='Factorio'))",
+            "await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='Bunny Girl Senpai'))",
+            "await bot.change_presence(activity=discord.Game(name='Node.js'))",
+            "await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='xQcOW'))",
+            "await bot.change_presence(activity=discord.Game(name='Minecraft'))",
+            "await bot.change_presence(activity=discord.Game(name='with your mom'))",
+            "await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='Everyone'))",
+            "await bot.change_presence(activity=discord.Game(name='osu!'))",
+            "await bot.change_presence(activity=discord.Game(name='Genshin Impact'))",
+            "await bot.change_presence(activity=discord.Game(name='Titanfall 2'))",
+            "await bot.change_presence(activity=discord.Game(name='x86 Assembly'))",
+            "await bot.change_presence(activity=discord.Game(name='SCP Containment Breach'))",
+            "await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='Kobayashi's Dragon Maid'))",
+            "await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='Wikipedia'))",
+            "await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='r/furry_irl'))",
+            "await bot.change_presence(activity=discord.Game(name='Hypixel Skywars'))"
+            ]
 
         
+
 @bot.event
 async def on_ready():
     print('Logged in as {0.user}'.format(bot), ' - ', bot.user.id)
-    bot.loop.create_task(bot_status())
-    
+
+    while True:
+
+        statusNum = random.randint(0, len(statuses))
+        exec(statuses[statusNum])
+        asyncio.sleep(10)
+
 
 
 _8ball = ["Certainly yes", "Definentely Yes", "99.9% chance", "The chances are high", "Most likely", 
@@ -940,9 +939,6 @@ async def blackjack(ctx):
 t1 = time.time()
 
 bot.loop.create_task(heartbeat())
-
-bot_status.before_loop(bot.wait_until_ready())    
-bot_status.start()
 
 keep_alive()
 
