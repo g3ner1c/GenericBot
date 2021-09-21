@@ -66,16 +66,6 @@ def blackjack_increment(text_file, index):
         else:
             file.write(str((int(num[i]) + 1)).rstrip('\n') + ' ')
 
-def txt_increment(text_file):
-    
-    file = open(text_file,"r+")
-    num = file.readline()
-    num = int(num.strip())
-    file.truncate(0)
-    file.close()
-    file = open(text_file,"r+")
-    file.write(str((num + 1)))
-
 async def heartbeat():
 
     global ping_arr
@@ -98,13 +88,68 @@ async def heartbeat():
 
         await asyncio.sleep(40)
 
-general = bot.get_channel(id=745066591443746857) # replace with channel_id
-bot_commands = general = bot.get_channel(id=745651510242836510)
+async def bot_status():
 
+    # Setting `Playing ` status
+    # await bot.change_presence(activity=discord.Game(name="a game"))
+
+    # Setting `Streaming ` status
+    # await bot.change_presence(activity=discord.Streaming(name="My Stream", url=my_twitch_url))
+
+    # Setting `Listening ` status
+    # await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="a song"))
+
+    # Setting `Watching ` status
+    # await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="a movie"))
+
+    while True:
+
+        await bot.change_presence(activity=discord.Game(name="Visual Studio Code"))
+        await asyncio.sleep(10)
+        await bot.change_presence(activity=discord.Game(name="Team Fortress 2"))
+        await asyncio.sleep(10)
+        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="The Bee Movie"))
+        await asyncio.sleep(10)
+        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="to your VCs ( ͡° ͜ʖ ͡°)"))
+        await asyncio.sleep(10)
+        await bot.change_presence(activity=discord.Game(name="Factorio"))
+        await asyncio.sleep(10)
+        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="Bunny Girl Senpai"))
+        await asyncio.sleep(10)
+        await bot.change_presence(activity=discord.Game(name="Node.js"))
+        await asyncio.sleep(10)
+        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="xQcOW"))
+        await asyncio.sleep(10)
+        await bot.change_presence(activity=discord.Game(name="Minecraft"))
+        await asyncio.sleep(10)
+        await bot.change_presence(activity=discord.Game(name="with your mom"))
+        await asyncio.sleep(10)
+        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="Everyone"))
+        await asyncio.sleep(10)
+        await bot.change_presence(activity=discord.Game(name="osu!"))
+        await asyncio.sleep(10)
+        await bot.change_presence(activity=discord.Game(name="Genshin Impact"))        
+        await asyncio.sleep(10)
+        await bot.change_presence(activity=discord.Game(name="Titanfall 2"))
+        await asyncio.sleep(10)
+        await bot.change_presence(activity=discord.Game(name="x86 Assembly"))
+        await asyncio.sleep(10)
+        await bot.change_presence(activity=discord.Game(name="SCP Containment Breach"))
+        await asyncio.sleep(10)
+        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="Kobayashi's Dragon Maid"))
+        await asyncio.sleep(10)
+        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="Wikipedia"))
+        await asyncio.sleep(10)
+        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="r/furry_irl"))
+        await asyncio.sleep(10)
+        
+
+        
 @bot.event
 async def on_ready():
-    await bot.change_presence(activity=discord.Game(name="VScode for 12,021 years"))
-    print('We have logged in as {0.user}'.format(bot))
+    print('Logged in as {0.user}'.format(bot), ' - ', bot.user.id)
+    
+
 
 _8ball = ["Certainly yes", "Definentely Yes", "99.9% chance", "The chances are high", "Most likely", 
     
@@ -906,10 +951,8 @@ async def blackjack(ctx):
 t1 = time.time()
 
 bot.loop.create_task(heartbeat())
+bot.loop.create_task(bot_status())
 
 keep_alive()
 
 bot.run(os.getenv('discordtoken'))
-
-# client.get_channel(745066591443746857).send('*System Restart*')
-# client.get_channel(745066591443746857).send('*Bot Online*')
