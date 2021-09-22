@@ -116,28 +116,29 @@ listeningStatus = ['to your VCs ( ͡° ͜ʖ ͡°)'
 
 # 12 playing, 7 watching, 1 listening
 
-@tasks.loop(seconds=10)
-async def status_change():
-
-    statusType = random.randint(1, len(playingStatus)+len(watchingStatus)+len(listeningStatus)+1)
-
-    if statusType <= len(playingStatus):
-        statusNum = random.randint(0, len(playingStatus))
-        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=playingStatus[statusNum]))
-
-    elif statusType <= len(playingStatus)+len(watchingStatus):
-        statusNum = random.randint(0, len(watchingStatus))
-        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=watchingStatus[statusNum]))
-    
-    elif statusType <= len(playingStatus)+len(watchingStatus)+len(listeningStatus):
-        statusNum = len(listeningStatus)
-        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=listeningStatus[[statusNum]]))
-
 
 
 @bot.event
 async def on_ready():
     print('Logged in as {0.user}'.format(bot), ' - ', bot.user.id)
+
+    while True:
+
+        statusType = random.randint(1, len(playingStatus)+len(watchingStatus)+len(listeningStatus)+1)
+
+        if statusType <= len(playingStatus):
+            statusNum = random.randint(0, len(playingStatus))
+            await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=playingStatus[statusNum]))
+
+        elif statusType <= len(playingStatus)+len(watchingStatus):
+            statusNum = random.randint(0, len(watchingStatus))
+            await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=watchingStatus[statusNum]))
+        
+        elif statusType <= len(playingStatus)+len(watchingStatus)+len(listeningStatus):
+            statusNum = len(listeningStatus)
+            await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=listeningStatus[statusNum]))
+
+        await asyncio.sleep(10)
 
 
 
@@ -148,8 +149,6 @@ _8ball = ["Certainly yes", "Definentely Yes", "99.9% chance", "The chances are h
             "Try it out and see!", "Ask again later", "Better not tell you now", 
 
             "Cannot predict now", "Concentrate and ask again", "¯\_(ツ)_/¯"
-        
-
         ]
 
 @bot.command()
@@ -941,10 +940,6 @@ async def blackjack(ctx):
 t1 = time.time()
 
 bot.loop.create_task(heartbeat())
-
-status_change.before_loop(bot.wait_until_ready())    
-
-status_change.start()
 
 keep_alive()
 
