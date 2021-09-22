@@ -127,15 +127,15 @@ async def on_ready():
         statusType = random.randint(1, len(playingStatus)+len(watchingStatus)+len(listeningStatus))
 
         if statusType <= len(playingStatus):
-            statusNum = random.randint(0, len(playingStatus) + 1)
+            statusNum = random.randint(0, len(playingStatus) - 1)
             await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=playingStatus[statusNum]))
 
         elif statusType <= len(playingStatus)+len(watchingStatus):
-            statusNum = random.randint(0, len(watchingStatus) + 1)
+            statusNum = random.randint(0, len(watchingStatus) - 1)
             await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=watchingStatus[statusNum]))
         
         elif statusType <= len(playingStatus)+len(watchingStatus)+len(listeningStatus):
-            statusNum = random.randint(0, len(listeningStatus) + 1)
+            statusNum = random.randint(0, len(listeningStatus) - 1)
             await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=listeningStatus[statusNum]))
 
         await asyncio.sleep(10)
