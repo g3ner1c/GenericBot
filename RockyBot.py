@@ -103,39 +103,41 @@ async def heartbeat():
 # Setting `Watching ` status
 # await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="a movie"))
 
-statuses = ["await bot.change_presence(activity=discord.Game(name='Visual Studio Code'))",
-            "await bot.change_presence(activity=discord.Game(name='Team Fortress 2'))",
-            "await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='The Bee Movie'))",
-            "await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name='to your VCs ( ͡° ͜ʖ ͡°)'))",
-            "await bot.change_presence(activity=discord.Game(name='Factorio'))",
-            "await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='Bunny Girl Senpai'))",
-            "await bot.change_presence(activity=discord.Game(name='Node.js'))",
-            "await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='xQcOW'))",
-            "await bot.change_presence(activity=discord.Game(name='Minecraft'))",
-            "await bot.change_presence(activity=discord.Game(name='with your mom'))",
-            "await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='Everyone'))",
-            "await bot.change_presence(activity=discord.Game(name='osu!'))",
-            "await bot.change_presence(activity=discord.Game(name='Genshin Impact'))",
-            "await bot.change_presence(activity=discord.Game(name='Titanfall 2'))",
-            "await bot.change_presence(activity=discord.Game(name='x86 Assembly'))",
-            "await bot.change_presence(activity=discord.Game(name='SCP Containment Breach'))",
-            "await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='Kobayashi's Dragon Maid'))",
-            "await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='Wikipedia'))",
-            "await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='r/furry_irl'))",
-            "await bot.change_presence(activity=discord.Game(name='Hypixel Skywars'))"
+playingStatus = ['Visual Studio Code','x86 Assembly','with your mom','Titanfall 2','Team Fortress 2',
+            'SCP Containment Breach','osu!','Node.js','Minecraft','Hypixel Skywars','Genshin Impact','Factorio'
+            ] 
+
+watchingStatus = ['xQcOW','Wikipedia','The Bee Movie','r/furry_irl','Kobayashi Dragon Maid','Everyone',
+            'Bunny Girl Senpai'
             ]
 
-        
+listeningStatus = ['to your VCs ( ͡° ͜ʖ ͡°)'
+            ]
+
+# 12 playing, 7 watching, 1 listening
+
+@tasks.loop(seconds=10)
+async def status_change():
+
+    statusType = random.randint(1, len(playingStatus)+len(watchingStatus)+len(listeningStatus)+1)
+
+    if statusType <= len(playingStatus):
+        statusNum = random.randint(0, len(playingStatus))
+        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=playingStatus[statusNum]))
+
+    elif statusType <= len(playingStatus)+len(watchingStatus):
+        statusNum = random.randint(0, len(watchingStatus))
+        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=watchingStatus[statusNum]))
+    
+    elif statusType <= len(playingStatus)+len(watchingStatus)+len(listeningStatus):
+        statusNum = len(listeningStatus)
+        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=listeningStatus[[statusNum]]))
+
+
 
 @bot.event
 async def on_ready():
     print('Logged in as {0.user}'.format(bot), ' - ', bot.user.id)
-
-    while True:
-
-        statusNum = random.randint(0, len(statuses))
-        exec(statuses[statusNum])
-        asyncio.sleep(10)
 
 
 
@@ -939,6 +941,10 @@ async def blackjack(ctx):
 t1 = time.time()
 
 bot.loop.create_task(heartbeat())
+
+status_change.before_loop(bot.wait_until_ready())    
+
+status_change.start()
 
 keep_alive()
 
