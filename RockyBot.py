@@ -517,16 +517,18 @@ async def on_message(ctx):
 
     if any(word in ctx.content for word in ['mai san','maisan','MAI SAN','MAISAN','mai-san','Mai-san','MAI-SAN']):   
         file = open("time.txt","r+")
-        ltm = float(file.readline().strip())
+        ltm = float(file.readline().strip().strip('\x00'))
         now = time.time()
         file.truncate(0)
-        file.close()
-        file = open("time.txt","r+")
         file.write(str(now))
+
+        string_time = '*This server has gone ' + str(int((now - ltm)//86400)) + ' days ' + str(int(((now - ltm)%86400)//3600)) + ' hours ' + str(int(((now - ltm)%3600)//60)) + ' minutes '+ str(round((now - ltm)%60)) + ' seconds without mentioning Mai-san*'
+        print(string_time)
+
         if now - ltm > 600:
-            string = '*This server has gone ' + str((now - ltm)//86400) + ' days ' + str(((now - ltm)%86400)//3600) + ' hours ' + str(((now - ltm)%3600)//60) + ' minutes '+ str(round((now - ltm)%60)) + ' seconds without mentioning Mai-san*'
-            await ctx.channel.send(string)
-            print(string)
+
+            await ctx.channel.send(string_time)
+
 
 @bot.command()
 async def status(ctx):
