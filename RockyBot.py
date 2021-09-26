@@ -153,7 +153,7 @@ _8ball = ["Certainly yes", "Definentely Yes", "99.9% chance", "The chances are h
         ]
 
 
-@slash.slash(name="AI Autocomplete",description="Ask GPT-J to autocomplete text.)
+@slash.slash(name="AI Autocomplete",description="Ask GPT-J to autocomplete text.")
 async def license(ctx,input):
         response = requests.post(os.getenv('aiurl'), data='{"context":"I eat cheese","topP":.9,"temp":.8,"response_length":128,"remove_input":true}').text
         generation = json.loads(response)['generated_text']
