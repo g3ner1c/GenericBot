@@ -4,6 +4,7 @@ import os
 import random
 import re
 import time
+import requests
 
 import asyncpraw
 import discord
@@ -19,15 +20,18 @@ from pyowm.owm import OWM
 from randfacts import get_fact
 from scipy.interpolate import make_interp_spline
 from keep_alive import keep_alive
+from discord_slash import SlashCommand
 
 load_dotenv()
 
-bot = commands.Bot(command_prefix='$')
+bot = commands.Bot(intents=discord.Intents.default(), command_prefix='$')
 
 global channel_say
 channel_say = 0
 
 # client = discord.Client()
+slash = SlashCommand(bot, sync_commands=True)
+
 
 global time_uwu
 time_uwu = time.time()
@@ -103,19 +107,16 @@ async def heartbeat():
 # Setting `Watching ` status
 # await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="a movie"))
 
-playingStatus = ['Visual Studio Code','x86 Assembly','with your mom','Titanfall 2','Team Fortress 2',
+playingStatus = ['Visual Studio Code','x86 Assembly','Titanfall 2','Team Fortress 2',
             'SCP Containment Breach','osu!','Node.js','Minecraft','Hypixel Skywars','Genshin Impact','Factorio'
             ] 
 
-watchingStatus = ['xQcOW','Wikipedia','The Bee Movie','r/furry_irl','Kobayashi Dragon Maid','Everyone',
-            'Bunny Girl Senpai'
+watchingStatus = ['xQcOW','Wikipedia','The Bee Movie','Everyone',
+            'Mai-San'
             ]
 
-listeningStatus = ['to your VCs ( ͡° ͜ʖ ͡°)'
+listeningStatus = ['to your VCs'
             ]
-
-# 12 playing, 7 watching, 1 listening
-
 
 
 @bot.event
@@ -151,6 +152,15 @@ _8ball = ["Certainly yes", "Definentely Yes", "99.9% chance", "The chances are h
             "Cannot predict now", "Concentrate and ask again", "¯\_(ツ)_/¯"
         ]
 
+
+@slash.slash(name="AI Autocomplete",description="Ask GPT-J to autocomplete text.)
+async def license(ctx,input):
+        response = requests.post(os.getenv('aiurl'), data='{"context":"I eat cheese","topP":.9,"temp":.8,"response_length":128,"remove_input":true}').text
+        generation = json.loads(response)['generated_text']
+        await ctx.send(generation)
+
+
+
 @bot.command()
 async def license(ctx):
     license  = 'Copyright © 2021 awesomeplaya211 & Banshee-72 \n Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: \n The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. \nTHE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.'
@@ -158,7 +168,7 @@ async def license(ctx):
     await ctx.send(license)
 
 @bot.command()
-# buggy lmao
+# buggy lol
 async def graphing(ctx, subst, equ):
     mequ = equ
     x = np.linspace(-125, 125, 2501)
