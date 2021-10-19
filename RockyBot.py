@@ -1,26 +1,28 @@
 import asyncio
+import json
 import math
 import os
 import random
 import re
 import time
-import requests
 
 import asyncpraw
 import discord
-from discord.utils import escape_markdown
 import matplotlib.pyplot as plt
 import numpy as np
+import requests
 import uwuify
 import wikipedia
 from discord import channel, message, player
 from discord.ext import commands, tasks
+from discord.utils import escape_markdown
+from discord_slash import SlashCommand
 from dotenv import load_dotenv
 from pyowm.owm import OWM
 from randfacts import get_fact
 from scipy.interpolate import make_interp_spline
+
 from keep_alive import keep_alive
-from discord_slash import SlashCommand
 
 load_dotenv()
 
