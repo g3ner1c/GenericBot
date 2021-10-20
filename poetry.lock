@@ -494,6 +494,14 @@ python-versions = ">=3.6,<4.0"
 click = ">=8.0.1,<9.0.0"
 
 [[package]]
+name = "vexpy"
+version = "0.0.7"
+description = "Python vexillology library using https://flagpedia.net/"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "werkzeug"
 version = "2.0.1"
 description = "The comprehensive WSGI web application library."
@@ -531,7 +539,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "4ccd2c3809e4e2e5e1cfa00e716e1a4d2f991a1ab0b57bb7cff785c534eb3db2"
+content-hash = "273d3021bced509040f11c0a45f45889ac35338b75827da1663bab9a2170d109"
 
 [metadata.files]
 aiofiles = [
@@ -970,6 +978,10 @@ urllib3 = [
 uwuify = [
     {file = "uwuify-1.1.0-py3-none-any.whl", hash = "sha256:554dffbd9c5620006a0208031f82c3d2fe7a63c4a426ccd2436dea18b1a446fa"},
     {file = "uwuify-1.1.0.tar.gz", hash = "sha256:6afebb9d4d7a1d31529304f9915f18e806699c50380a72875e50c35c01581d0c"},
+]
+vexpy = [
+    {file = "vexpy-0.0.7-py3-none-any.whl", hash = "sha256:6760789377f3386e3aea576d2fd05beec8b1bade9b6188d462fb14341237842b"},
+    {file = "vexpy-0.0.7.tar.gz", hash = "sha256:069c7afbcf12c70fe977b0998095180ec52e57acc235bdd6c3ab7a7554406cf7"},
 ]
 werkzeug = [
     {file = "Werkzeug-2.0.1-py3-none-any.whl", hash = "sha256:6c1ec500dcdba0baa27600f6a22f6333d8b662d22027ff9f6202e3367413caa8"},

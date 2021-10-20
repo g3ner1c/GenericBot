@@ -657,7 +657,7 @@ async def fact(ctx):
 @bot.command()
 async def flag(ctx):
 
-    country = random.choice(list(vp.iso))
+    country = random.choice(list(vp.iso()))
 
     await ctx.send(vp.flag_src(country))
 
@@ -668,15 +668,15 @@ async def flag(ctx):
 
         action = await bot.wait_for('message',  check=is_correct)
 
-        if any(i.casefold() == action.message.casefold() for i in vp.iso[country]):
+        if any(i.casefold() == action.content.casefold() for i in vp.iso()[country]):
 
-            await ctx.send(action.author,' correctly answered ',vp.iso_code[country],' !')
+            await ctx.send(action.author.display_name + ' correctly answered ' + vp.iso_code(country) + '!')
 
             break
         
-        elif action.message.casefold() == 'show answer':
+        elif action.content.casefold() == 'show answer':
 
-            await ctx.send('The answer was ',vp.iso_code[country])
+            await ctx.send('The answer was ' + vp.iso_code(country))
 
             break
 
