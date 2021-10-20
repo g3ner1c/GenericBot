@@ -661,12 +661,12 @@ async def flag(ctx):
 
     await ctx.send(vp.flag_src(country))
 
-    def is_correct(_ctx):
-        return _ctx.author == ctx.author
+    # def is_correct(_ctx):
+    #     return _ctx.author == ctx.author
     
     while True:
 
-        action = await bot.wait_for('message',  check=is_correct)
+        action = await bot.wait_for('message',  check=True)
 
         if any(i.casefold() == action.content.casefold() for i in vp.iso()[country]):
 
