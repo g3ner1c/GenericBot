@@ -1,4 +1,4 @@
-# RockyBot v1.3.0
+# RockyBot v1.3.1
 
 ## __Multipurpose Discord bot created by awesomeplaya211#4051 (@awesomeplaya211) with contributions by @Banshee-72__
 
