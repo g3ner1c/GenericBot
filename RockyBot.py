@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import requests
 import uwuify
+import vexpy as vp
 import wikipedia
 from discord import channel, message, player
 from discord.ext import commands, tasks
@@ -652,6 +653,34 @@ async def fact(ctx):
 
         
     await ctx.send(get_fact())
+
+@bot.command()
+async def flag(ctx):
+
+    country = random.choice(list(vp.iso))
+
+    await ctx.send(vp.flag_src(country))
+
+    def is_correct(_ctx):
+        return _ctx.author == ctx.author
+    
+    while True:
+
+        action = await bot.wait_for('message',  check=is_correct)
+
+        if any(i.casefold() == action.message.casefold() for i in vp.iso[country]):
+
+            await ctx.send(action.author,' correctly answered ',vp.iso_code[country],' !')
+
+            break
+        
+        elif action.message.casefold() == 'show answer':
+
+            await ctx.send('The answer was ',vp.iso_code[country])
+
+            break
+
+
 
 @bot.command()
 async def blackjackinfo(ctx):
