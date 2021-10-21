@@ -160,9 +160,9 @@ async def graphing(ctx, subst, equ):
     plt.xlim(-125, 125)
     plt.ylim(-25, max(y)*1.1)
     plt.plot(x, y)
-    plt.savefig("graph.png")
+    plt.savefig("temp/graph.png")
 
-    file = discord.File("graph.png")
+    file = discord.File("temp/graph.png")
     embed = discord.Embed()
     embed.set_image(url="attachment://graph.png")
     await ctx.send(embed=embed, file=file)
@@ -335,12 +335,12 @@ async def netgraph(ctx):
 
     plt.title('Latency within the last 10 minutes')
 
-    plt.savefig("test.png")
+    plt.savefig("temp/netgraph.png")
 
     # an image in the same folder as the main bot file
-    file = discord.File("test.png")
+    file = discord.File("temp/netgraph.png")
     embed = discord.Embed()  # any kwargs you want here
-    embed.set_image(url="attachment://test.png")
+    embed.set_image(url="attachment://netgraph.png")
     # filename and extension have to match (ex. "thisname.jpg" has to be "attachment://thisname.jpg")
     await ctx.send(embed=embed, file=file)
     plt.clf()
@@ -416,7 +416,7 @@ async def weather(ctx, *, location):
     plt.savefig("forecast.png")
 
     # an image in the same folder as the main bot file
-    file = discord.File("forecast.png")
+    file = discord.File("temp/forecast.png")
     embed = discord.Embed()  # any kwargs you want here
     embed.set_image(url="attachment://forecast.png")
     # filename and extension have to match (ex. "thisname.jpg" has to be "attachment://thisname.jpg")
