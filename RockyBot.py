@@ -281,7 +281,7 @@ async def news(ctx):
 @bot.command()
 async def truth(ctx):
 
-    with open("truth.txt") as file:
+    with open("assets/truth.txt") as file:
 
         lines = file.readlines()
         await ctx.send(random.choice(lines))
@@ -337,11 +337,9 @@ async def netgraph(ctx):
 
     plt.savefig("temp/netgraph.png")
 
-    # an image in the same folder as the main bot file
     file = discord.File("temp/netgraph.png")
-    embed = discord.Embed()  # any kwargs you want here
+    embed = discord.Embed()
     embed.set_image(url="attachment://netgraph.png")
-    # filename and extension have to match (ex. "thisname.jpg" has to be "attachment://thisname.jpg")
     await ctx.send(embed=embed, file=file)
     plt.clf()
 
@@ -413,13 +411,11 @@ async def weather(ctx, *, location):
 
     plt.title('3 Hour Interval Forecast at ' + location)
 
-    plt.savefig("forecast.png")
+    plt.savefig("temp/forecast.png")
 
-    # an image in the same folder as the main bot file
     file = discord.File("temp/forecast.png")
-    embed = discord.Embed()  # any kwargs you want here
+    embed = discord.Embed()
     embed.set_image(url="attachment://forecast.png")
-    # filename and extension have to match (ex. "thisname.jpg" has to be "attachment://thisname.jpg")
     await ctx.send(embed=embed, file=file)
     plt.clf()
 
@@ -435,11 +431,9 @@ async def info(ctx):
 @bot.command()
 async def pfp(ctx):
 
-    # an image in the same folder as the main bot file
-    file = discord.File("pfp.jpg")
-    embed = discord.Embed()  # any kwargs you want here
+    file = discord.File("assets/pfp.jpg")
+    embed = discord.Embed()
     embed.set_image(url="attachment://pfp.jpg")
-    # filename and extension have to match (ex. "thisname.jpg" has to be "attachment://thisname.jpg")
     await ctx.send(embed=embed, file=file)
 
 
