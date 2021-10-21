@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "repl_python3_RockyBot"
+version = "0.1.0"
+description = ""
+authors = ["awesomeplaya211 <<>>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+discord = "^1.7.3"
+pyowm = "^3.2.0"
+python-dotenv = "^0.19.0"
+wikipedia = "^1.4.0"
+asyncpraw = "^7.4.0"
+matplotlib = "^3.4.3"
+uwuify = "^1.1.0"
+randfacts = "^0.9.1"
+Flask = "^2.0.1"
+discord-py-slash-command = "^3.0.1"
+vexpy = "^0.1.1"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

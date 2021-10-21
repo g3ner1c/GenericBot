@@ -1,30 +1,25 @@
-# RockyBot v1.3.0
-### __Multipurpose Discord bot created by awesomeplaya211#4051 (@awesomeplaya211)__
-### __with contributions by @Banshee-72__
+# RockyBot
 
-### __Suggestions and push requests are welcome__
+## Multipurpose Discord bot hosted on <https://replit.com/>
 
-# TODO LIST:
-## Features:
-* Create translate feature
-* Create read feature
-* Create help feature
-* Debug graphing feature
-## Optimizations:
-* Clean up code + comment
-* General optimizations
-* Create cog for features
+### Installing Dependencies
 
--- awesomeplaya211
+Install poetry through pip:
 
-### _Required packages:_
-* asyncpraw
-* discord
-* matplotlib
-* numpy
-* uwuify
-* wikipedia
-* randfacts
-* scipy
-* dotenv
-* pyowm
+```sh
+pip install poetry
+```
+
+Then simply execute:
+
+```sh
+poetry install
+```
+
+to install dependencies from the poetry.lock file
+
+### Credits
+
+* **@awesomeplaya211 (awesomeplaya211#4051)** - *Main Dev*
+* **@Banshee-72**
+* **Numberz#4966** - *Made [Profile Picture](https://raw.githubusercontent.com/awesomeplaya211/RockyBot/main/pfp.jpg)*

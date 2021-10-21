@@ -1,4 +1,5 @@
 import asyncio
+import json
 import math
 import os
 import random
@@ -9,23 +10,30 @@ import asyncpraw
 import discord
 import matplotlib.pyplot as plt
 import numpy as np
+import requests
 import uwuify
+import vexpy as vp
 import wikipedia
-from discord import channel, message, player
-from discord.ext import commands
+from discord.ext import commands, tasks
+from discord.utils import escape_markdown
+from discord_slash import SlashCommand
 from dotenv import load_dotenv
 from pyowm.owm import OWM
 from randfacts import get_fact
 from scipy.interpolate import make_interp_spline
 
+from keep_alive import keep_alive
+
 load_dotenv()
 
-bot = commands.Bot(command_prefix='$')
+bot = commands.Bot(intents=discord.Intents.default(), command_prefix='$')
 
 global channel_say
 channel_say = 0
 
 # client = discord.Client()
+slash = SlashCommand(bot, sync_commands=True)
+
 
 global time_uwu
 time_uwu = time.time()
@@ -33,47 +41,9 @@ time_uwu = time.time()
 reddit = asyncpraw.Reddit(
     client_id="MZgXIeYJm5rsrFHm9uWCeA",
     client_secret=os.getenv('reddittoken'),
-    user_agent="discord:GenericBot:v1.3.0 (by /u/awesomeplaya211)"
+    user_agent="discord:GenericBot:v1.4.0 (by /u/awesomeplaya211)"
 )
 
-
-def txt_increment(text_file):
-    
-    file = open(text_file,"r+")
-    num = file.readline()
-    num = int(num.strip())
-    file.truncate(0)
-    file.close()
-    file = open(text_file,"r+")
-    file.write(str((num + 1)))
-
-def blackjack_increment(text_file, index):
-
-
-    file = open(text_file,"r+")
-    num = file.readline()
-    num = num.strip().split()
-    file.truncate(0)
-    file.close()
-    file = open(text_file,"r+")
-    for i in range(len(num)):
-
-
-        if i != index:
-            file.write(str((int(num[i]))).rstrip('\n') + ' ')
-            
-        else:
-            file.write(str((int(num[i]) + 1)).rstrip('\n') + ' ')
-
-def txt_increment(text_file):
-    
-    file = open(text_file,"r+")
-    num = file.readline()
-    num = int(num.strip())
-    file.truncate(0)
-    file.close()
-    file = open(text_file,"r+")
-    file.write(str((num + 1)))
 
 async def heartbeat():
 
@@ -86,44 +56,92 @@ async def heartbeat():
 
         if len(ping_arr) < 16:
 
-            ping_arr = np.append(ping_arr, int(round(bot.latency * 1000,3)))
+            ping_arr = np.append(ping_arr, int(round(bot.latency * 1000, 3)))
             time_ping = time.time()
 
         else:
 
             ping_arr = np.delete(ping_arr, 0)
-            ping_arr = np.append(ping_arr, int(round(bot.latency * 1000,3)))
+            ping_arr = np.append(ping_arr, int(round(bot.latency * 1000, 3)))
             time_ping = time.time()
 
         await asyncio.sleep(40)
 
-general = bot.get_channel(id=745066591443746857) # replace with channel_id
-bot_commands = general = bot.get_channel(id=745651510242836510)
+
+# Setting `Playing ` status
+# await bot.change_presence(activity=discord.Game(name="a game"))
+
+# Setting `Streaming ` status
+# await bot.change_presence(activity=discord.Streaming(name="My Stream", url=my_twitch_url))
+
+# Setting `Listening ` status
+# await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="a song"))
+
+# Setting `Watching ` status
+# await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="a movie"))
+
+playingStatus = ['Visual Studio Code', 'x86 Assembly', 'Titanfall 2', 'Team Fortress 2',
+                 'SCP Containment Breach', 'osu!', 'Node.js', 'Minecraft', 'Hypixel Skywars', 'Genshin Impact', 'Factorio'
+                 ]
+
+watchingStatus = ['xQcOW', 'Wikipedia', 'The Bee Movie', 'Everyone',
+                  'Mai-San'
+                  ]
+
+listeningStatus = ['to your VCs'
+                   ]
+
 
 @bot.event
 async def on_ready():
-    await bot.change_presence(activity=discord.Game(name="VScode for 12,021 years"))
-    print('We have logged in as {0.user}'.format(bot))
+    print('Logged in as {0.user}'.format(bot), ' - ', bot.user.id)
 
-_8ball = ["Certainly yes", "Definentely Yes", "99.9% chance", "The chances are high", "Most likely", 
-    
-            "Probably", "23% chance", "Not likely", "Don't count on it", "No way OMEGALUL",
+    while True:
 
-            "Try it out and see!", "Ask again later", "Better not tell you now", 
+        statusType = random.randint(
+            1, len(playingStatus)+len(watchingStatus)+len(listeningStatus))
 
-            "Cannot predict now", "Concentrate and ask again", "¯\_(ツ)_/¯"
-        
-        
-        ]
+        if statusType <= len(playingStatus):
+            statusNum = random.randint(0, len(playingStatus) - 1)
+            await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=playingStatus[statusNum]))
+
+        elif statusType <= len(playingStatus)+len(watchingStatus):
+            statusNum = random.randint(0, len(watchingStatus) - 1)
+            await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=watchingStatus[statusNum]))
+
+        elif statusType <= len(playingStatus)+len(watchingStatus)+len(listeningStatus):
+            statusNum = random.randint(0, len(listeningStatus) - 1)
+            await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=listeningStatus[statusNum]))
+
+        await asyncio.sleep(10)
+
+
+_8ball = ["Certainly yes", "Definentely Yes", "99.9% chance", "The chances are high", "Most likely",
+
+          "Probably", "23% chance", "Not likely", "Don't count on it", "No way OMEGALUL",
+
+          "Try it out and see!", "Ask again later", "Better not tell you now",
+
+          "Cannot predict now", "Concentrate and ask again", "¯\_(ツ)_/¯"
+          ]
+
+
+@slash.slash(name="AI Autocomplete", description="Ask GPT-J to autocomplete text.")
+async def license(ctx, input):
+    response = requests.post(os.getenv('aiurl'), data='{"context":"I eat cheese","topP":.9,"temp":.8,"response_length":128,"remove_input":true}').text
+    generation = json.loads(response)['generated_text']
+    await ctx.send(generation)
+
 
 @bot.command()
 async def license(ctx):
-    license  = 'Copyright © 2021 awesomeplaya211 & Banshee-72 \n Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: \n The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. \nTHE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.'
+    license = 'Copyright © 2021 awesomeplaya211 & Banshee-72 \n Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: \n The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. \nTHE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.'
     await ctx.send('By using the bot you agree to the following license:')
     await ctx.send(license)
 
+
 @bot.command()
-# buggy lmao
+# buggy lol
 async def graphing(ctx, subst, equ):
     mequ = equ
     x = np.linspace(-125, 125, 2501)
@@ -141,33 +159,43 @@ async def graphing(ctx, subst, equ):
         equ = mequ
     plt.xlim(-125, 125)
     plt.ylim(-25, max(y)*1.1)
-    plt.plot(x,y)
-    plt.savefig("graph.png")
+    plt.plot(x, y)
+    plt.savefig("temp/graph.png")
 
-    file = discord.File("graph.png")
+    file = discord.File("temp/graph.png")
     embed = discord.Embed()
     embed.set_image(url="attachment://graph.png")
     await ctx.send(embed=embed, file=file)
     plt.clf()
 
+
 @bot.command()
 async def hello(ctx):
     await ctx.send('Hello!')
 
+
 @bot.command()
-async def say(ctx,term):
+async def say(ctx, term):
     if ctx.author.id == 538921994645798915:
 
         await channel_say.send(term)
+
+
+@bot.command()
+async def dm(ctx, user: discord.User, *, message):
+    if ctx.author.id == 538921994645798915:
+
+        await user.send(message)
+
 
 @bot.command()
 async def test(ctx):
     await ctx.send(ctx.author)
 
+
 @bot.command()
 async def art(ctx):
-    
-    txt_increment("stats.txt")
+
     subreddit = await reddit.subreddit("art")
 
     post_list = []
@@ -187,10 +215,10 @@ async def art(ctx):
     await ctx.send('Posted by u/'+reddit_post.author.name)
     await ctx.send(str(reddit_post.score)+' upvotes')
 
+
 @bot.command()
 async def cat(ctx):
-        
-    txt_increment("stats.txt")
+
     subreddit = await reddit.subreddit("cats")
 
     post_list = []
@@ -204,7 +232,6 @@ async def cat(ctx):
             post_list.append(submission)
             count += 1
 
-
     reddit_post = random.choice(post_list)
     await ctx.send(reddit_post.title)
     await ctx.send(reddit_post.url)
@@ -215,7 +242,6 @@ async def cat(ctx):
 @bot.command()
 async def news(ctx):
 
-    txt_increment("stats.txt")
     subreddit = await reddit.subreddit("news")
 
     post_list = []
@@ -233,7 +259,7 @@ async def news(ctx):
     embed = discord.Embed()
     embedstr = ''
     for post in post_list:
-        
+
         num += 1
         redditstr = str(num) + ') [' + post.title + '](' + post.url + ')\n\n'
         embedstr += redditstr
@@ -242,48 +268,62 @@ async def news(ctx):
     await ctx.channel.send(embed=embed)
 
 
-@bot.command()
-async def sp(ctx):
-# https://cdn.discordapp.com/attachments/745066591443746857/879558411895848960/anime-couples.png
-    
-    with open("posts.txt") as file:
+# @bot.command()
+# async def sp(ctx):
+#     # https://cdn.discordapp.com/attachments/745066591443746857/879558411895848960/anime-couples.png
 
-        lines = file.readlines()
-        await ctx.send(random.choice(lines))
+#     with open("posts.txt") as file:
+
+#         lines = file.readlines()
+#         await ctx.send(random.choice(lines))
+
 
 @bot.command()
 async def truth(ctx):
-        
-    with open("truth.txt") as file:
+
+    with open("assets/truth.txt") as file:
 
         lines = file.readlines()
         await ctx.send(random.choice(lines))
 
+# @bot.command()
+# async def calc(ctx,equ):
+#     await ctx.send(str(eval(equ)))
+
+# too complicated ^
+
+
 @bot.command()
-async def calc(ctx,equ):
+async def exec(ctx, *, command):
+
+    if ctx.author.id == 538921994645798915:
+
+        exec(command)
+
+    else:
+        await ctx.send("You're not my dev! >:(")
+        print(ctx.author, 'attempted to execute:\n', ctx.content)
 
 
-    
-    await ctx.send(str(eval(equ)))
-       
 @bot.command()
 async def ping(ctx):
     await ctx.send(f'Pong! Latency: {round(bot.latency * 1000, 3)}ms')
-         
+
+
 @bot.command()
 async def netgraph(ctx):
-        
 
     time_since_ping = round(time.time() - time_ping)
 
-    x = np.append(np.arange((len(ping_arr) - 1)*-40 , 1, 40) - time_since_ping, 0)
+    x = np.append(np.arange((len(ping_arr) - 1)*-
+                  40, 1, 40) - time_since_ping, 0)
     y = np.append(ping_arr, ping_arr[len(ping_arr) - 1])
 
     X_ = np.linspace(min(x), max(x), 500)
     X_Y_Spline = make_interp_spline(x, y)
     Y_ = X_Y_Spline(X_)
 
-    plt.plot(X_,Y_, color = 'red')
+    plt.plot(X_, Y_, color='red')
 
     plt.xlim(-600, 0)
 
@@ -295,45 +335,57 @@ async def netgraph(ctx):
 
     plt.title('Latency within the last 10 minutes')
 
-    plt.savefig("test.png")
+    plt.savefig("temp/netgraph.png")
 
-
-
-
-    file = discord.File("test.png") # an image in the same folder as the main bot file
-    embed = discord.Embed() # any kwargs you want here
-    embed.set_image(url="attachment://test.png")
-    # filename and extension have to match (ex. "thisname.jpg" has to be "attachment://thisname.jpg")
+    file = discord.File("temp/netgraph.png")
+    embed = discord.Embed()
+    embed.set_image(url="attachment://netgraph.png")
     await ctx.send(embed=embed, file=file)
     plt.clf()
 
 
 @bot.command()
 async def weather(ctx, *, location):
-    txt_increment("stats.txt")
+
     owm = OWM('a4348bddc4faa37365b82cee8c3136da')
     mgr = owm.weather_manager()
-    observation = mgr.weather_at_place(location)  # the observation object is a box containing a weather object
+    # the observation object is a box containing a weather object
+    observation = mgr.weather_at_place(location)
     w = observation.weather
 
     reg = owm.city_id_registry()
     list_of_locations = reg.locations_for(location)
 
+    embedVar = discord.Embed(title="Weather in " + location, color=0xff3131)
 
-    # embedVar = discord.Embed(title="Weather in " + location + ' (Latitude:' + str(list_of_locations[0].lat) + ', Longitude:' + str(list_of_locations[0].lon) + ')', color=0xff3131)
+    embedVar.add_field(name="Current Temperature", value=
+        str(w.temperature('fahrenheit')['temp']) + ' °F / ' +
+        str(w.temperature('celsius')['temp']) + ' °C',
+        inline=False)
 
-    embedVar = discord.Embed(title="Weather in " + location, color=0xff3131) # <-- color of RockyBot role on ***REMOVED*** Server
-
-    embedVar.add_field(name="Current Temperature", value=str(w.temperature('fahrenheit')['temp']) + ' °F / ' + str(w.temperature('celsius')['temp']) + ' °C', inline=False)
-    embedVar.add_field(name="High", value=str(w.temperature('fahrenheit')['temp_max']) + ' °F / ' + str(w.temperature('celsius')['temp_max']) + ' °C', inline=False)
-    embedVar.add_field(name="Low", value=str(w.temperature('fahrenheit')['temp_min']) + ' °F / ' + str(w.temperature('celsius')['temp_min']) + ' °C', inline=False)
-    embedVar.add_field(name="Feels like", value=str(w.temperature('fahrenheit')['feels_like']) + ' °F / ' + str(w.temperature('celsius')['feels_like']) + ' °C', inline=False)
-
-    embedVar.add_field(name="Wind Speed", value=str(w.wind()['speed']) + ' m/s', inline=False)
+    embedVar.add_field(name="High", value=
+        str(w.temperature('fahrenheit')['temp_max']) + ' °F / ' +
+        str(w.temperature('celsius')['temp_max']) + ' °C',
+        inline=False)
     
-    embedVar.add_field(name='Humidity', value=str(w.humidity) + '%', inline=False)
+    embedVar.add_field(name="Low", value=
+        str(w.temperature('fahrenheit')['temp_min']) + ' °F / ' +
+        str(w.temperature('celsius')['temp_min']) + ' °C',
+        inline=False)
 
-    embedVar.add_field(name='Air Pressure', value=str(w.pressure['press']) + ' hPa', inline=False)
+    embedVar.add_field(name="Feels like", value=
+        str(w.temperature('fahrenheit')['feels_like']) + ' °F / ' +
+        str(w.temperature('celsius')['feels_like']) + ' °C',
+        inline=False)
+
+    embedVar.add_field(name="Wind Speed", value=str(
+        w.wind()['speed']) + ' m/s', inline=False)
+
+    embedVar.add_field(name='Humidity', value=str(
+        w.humidity) + '%', inline=False)
+
+    embedVar.add_field(name='Air Pressure', value=str(
+        w.pressure['press']) + ' hPa', inline=False)
 
     await ctx.send(embed=embedVar)
 
@@ -341,13 +393,13 @@ async def weather(ctx, *, location):
     forecast_temps = np.array([])
     for weather in _3h_forecast:
 
-        forecast_temps = np.append(forecast_temps, weather.temperature('fahrenheit')['temp'])
+        forecast_temps = np.append(
+            forecast_temps, weather.temperature('fahrenheit')['temp'])
 
-
-    x = np.arange(3,121,3)
+    x = np.arange(3, 121, 3)
     y = forecast_temps
 
-    plt.plot(x,y, color = 'red')
+    plt.plot(x, y, color='red')
 
     plt.xlim(0, 120)
 
@@ -359,18 +411,13 @@ async def weather(ctx, *, location):
 
     plt.title('3 Hour Interval Forecast at ' + location)
 
-    plt.savefig("forecast.png")
+    plt.savefig("temp/forecast.png")
 
-
-
-
-    file = discord.File("forecast.png") # an image in the same folder as the main bot file
-    embed = discord.Embed() # any kwargs you want here
+    file = discord.File("temp/forecast.png")
+    embed = discord.Embed()
     embed.set_image(url="attachment://forecast.png")
-    # filename and extension have to match (ex. "thisname.jpg" has to be "attachment://thisname.jpg")
     await ctx.send(embed=embed, file=file)
     plt.clf()
-
 
 
 #                               put repo branch in $info here for easier testing
@@ -378,56 +425,66 @@ async def weather(ctx, *, location):
 
 @bot.command()
 async def info(ctx):
-    await ctx.send('*RockyBot v1.3.0 - main*\nHi! I am an emotionless bot programmed to feign a personality to you!\nMy owner is awesomeplaya211#4051\nDM him for bug reports or suggestions\nNotable contributions (@Banshee-72 on GitHub)\n**I am now open source!**\n**Use $github for my Github page!**\nProfile picture by Johnny Boy#4966')
-        
+    await ctx.send('*RockyBot v1.4.0 - main*\nHi! I am an emotionless bot programmed to feign a personality to you!\nMy owner is awesomeplaya211#4051\nDM him for bug reports or suggestions\nNotable contributions (@Banshee-72 on GitHub)\n**I am now open source!**\n**Use $github for my Github page!**\nProfile picture by Johnny Boy#4966')
+
+
 @bot.command()
 async def pfp(ctx):
 
-    file = discord.File("pfp.jpg") # an image in the same folder as the main bot file
-    embed = discord.Embed() # any kwargs you want here
+    file = discord.File("assets/pfp.jpg")
+    embed = discord.Embed()
     embed.set_image(url="attachment://pfp.jpg")
-    # filename and extension have to match (ex. "thisname.jpg" has to be "attachment://thisname.jpg")
     await ctx.send(embed=embed, file=file)
+
 
 @bot.command()
 async def github(ctx):
-        
+
     await ctx.send('https://github.com/awesomeplaya211/RockyBot')
+
 
 @bot.command()
 async def invite(ctx):
     await ctx.send('Add me to your server!')
     await ctx.send('https://discord.com/api/oauth2/authorize?client_id=866481377151156304&permissions=259846044736&scope=applications.commands%20bot')
-        
+
+
 @bot.command()
 async def flip(ctx):
 
-    if bool(random.randint(0,1)):
+    if bool(random.randint(0, 1)):
         await ctx.send('Heads')
-        
 
     else:
         await ctx.send('Tails')
-            
+
+
 @bot.command()
 async def ball(ctx):
-        await ctx.send(random.choice(_8ball))
-        
+    await ctx.send(random.choice(_8ball))
+
+
 @bot.command()
-async def rps(ctx,choice):
+async def rps(ctx, choice):
 
-    if choice == 'rock': choice = 0
-    if choice == 'paper': choice = 1
-    if choice == 'scissors': choice = 2
-    if choice == 'r': choice = 0
-    if choice == 'p': choice = 1
-    if choice == 's': choice = 2
+    if choice == 'rock':
+        choice = 0
+    if choice == 'paper':
+        choice = 1
+    if choice == 'scissors':
+        choice = 2
+    if choice == 'r':
+        choice = 0
+    if choice == 'p':
+        choice = 1
+    if choice == 's':
+        choice = 2
 
-    rng = random.randint(0,2)
+    rng = random.randint(0, 2)
 
     if choice-rng == 0:
         await ctx.send('Tie')
-        
+
     elif choice == 0 and rng == 1:
         await ctx.send('You lost lol')
 
@@ -439,86 +496,74 @@ async def rps(ctx,choice):
 
     else:
         await ctx.send('I call hacks')
-            
-       
+
+
 @bot.event
 async def on_message(ctx):
 
     await bot.process_commands(ctx)
 
-    if ctx.author == bot.user:   
+    if ctx.author == bot.user:
         return
 
     if (ctx.content.startswith('gm') or ctx.content.startswith('GM') or ctx.content.startswith('good morning') or ctx.content.startswith('Good morning')) and (ctx.content != 'gmas') and (ctx.content != 'GMAS'):
 
         await ctx.channel.send('Good morning!')
-        txt_increment("stats.txt")
 
     if ctx.content.startswith('gn') or ctx.content.startswith('GN') or ctx.content.startswith('good night') or ctx.content.startswith('Good night'):
 
-       await ctx.channel.send('Good night!')
-       txt_increment("stats.txt")
+        await ctx.channel.send('Good night!')
 
     if ctx.content.startswith('gg') or ctx.content.startswith('GG'):
 
-       await ctx.channel.send('Good game!')
-       txt_increment("stats.txt")
+        await ctx.channel.send('Good game!')
 
-    if any(word in ctx.content for word in ['mai san','maisan','MAI SAN','MAISAN','mai-san','Mai-san','MAI-SAN']):   
-        file = open("time.txt","r+")
-        ltm = float(file.readline().strip())
-        now = time.time()
-        file.truncate(0)
-        file.close()
-        file = open("time.txt","r+")
-        file.write(str(now))
-        if now - ltm > 600:
-            string = '*This server has gone ' + str((now - ltm)//86400) + ' days ' + str(((now - ltm)%86400)//3600) + ' hours ' + str(((now - ltm)%3600)//60) + ' minutes '+ str(round((now - ltm)%60)) + ' seconds without mentioning Mai-san*'
-            await ctx.channel.send(string)
-            print(string)
 
 @bot.command()
 async def status(ctx):
     t2 = time.time()
     await ctx.send('*Bot Online*')
-    string = 'Online for ' + str(math.floor((t2-t1)/3600)) + ' hours ' + str(math.floor(((t2-t1)%3600)/60)) + ' minutes '+ str(round((t2-t1)%60,3)) + ' seconds'
+    string = ('Online for ' +
+    str(math.floor((t2-t1)/3600)) + ' hours ' +
+    str(math.floor(((t2-t1) % 3600)/60)) + ' minutes ' +
+    str(round((t2-t1) % 60, 3)) + ' seconds')
     await ctx.send(string)
-          
-@bot.command()
-async def hmm(ctx):
-    await ctx.send('https://i.pinimg.com/originals/15/8b/ed/158bed9819e4fccf7e18a5eeeaf79c6b.png')
-        
+
+
 @bot.command()
 async def kill(ctx):
 
     if ctx.author.id == 538921994645798915:
         await ctx.send('*dies*')
-        
+
         await bot.close()
 
     else:
         await ctx.send("You're not my dev! >:(")
         print(ctx.author, 'attempted to kill bot')
-            
-#@bot.command()
-#async def help(ctx):
+
+# @bot.command()
+# async def help(ctx):
 #        await ctx.send('$info - information about me\n$github - my github page\n$status - bot status\n$invite - add me to your server\n$flip - flips a coin\n$8ball - 100% accurate answer to any question\n$rps - Rock Paper Scissors\n$hmm - hmm\n$kill - kills me **dont do this plz :C**')
 #        await ctx.send('$secret - its a secret! >_<\n$uwuify - UWU\n$stats - statistics\n$hug - hugs :D\n$blackjack - play me in blackjack!\n$blackjackstats - blackjack stats!\n$wiki - search wikipedia\n$fact - tell you a random fact\n$ping - latency test\n$netgraph - latency graph\n$art - top 100 post from r/art from the past week\n$cat - top 100 post from r/cats from the past week\n$shitpost or $196 - shitpost generator (sourced from Johnny Boy#4966 and various shitpost subreddits)')
-          
+
+
 @bot.command()
 async def secret(ctx):
     await ctx.send('https://media.tenor.com/images/7598d103a735d5568964e4967e42823d/tenor.gif')
     time.sleep(3)
     await ctx.send('lol baited')
-          
+
+
 @bot.command()
 async def copycat(ctx):
     await ctx.send(ctx)
-          
+
+
 @bot.command()
-#debug
-async def uwu(ctx,text):
-    uwu  = text
+# debug
+async def uwu(ctx, text):
+    uwu = text
     uwuified = ''
     for i in range(len(uwu)):
 
@@ -532,28 +577,32 @@ async def uwu(ctx,text):
     uwuified.strip()
     uwuified = uwuify.uwu(uwuified)
     await ctx.send(uwuified + 'uwu')
-         
+
+
 @bot.command()
 async def stats(ctx):
 
-    file = open("stats.txt","r+")
+    file = open("stats.txt", "r+")
     stat = file.readline()
     stat = int(stat.strip())
-    string_stat = 'I have been called '+ str(stat) + ' times'
+    string_stat = 'I have been called ' + str(stat) + ' times'
     await ctx.send(string_stat)
+
 
 @bot.command()
 async def hug(ctx):
 
     await ctx.send('⊂(・▽・⊂)')
 
+
 @bot.command()
-async def setlang(ctx,lang):
+async def setlang(ctx, lang):
 
     wikipedia.set_lang(lang)
     wiki_lang = 'Language set to ' + wikipedia.languages()[lang]
 
     await ctx.send(wiki_lang)
+
 
 @bot.command()
 async def wiki(ctx, *, search):
@@ -562,31 +611,58 @@ async def wiki(ctx, *, search):
 
     wiki_search_param = search
 
-    wiki_search_str = '*Searching Wikipedia for ' + wiki_search_param + '*'
+    # wiki_search_str = '*Searching Wikipedia for ' + wiki_search_param + '*'
 
-    await ctx.send(wiki_search_str)
+    # await ctx.send(wiki_search_str)
 
     try:
 
-        await ctx.send(wikipedia.page(wikipedia.search(wiki_search_param)[0], auto_suggest = False).url)
-
+        await ctx.send(wikipedia.page(wikipedia.search(wiki_search_param)[0], auto_suggest=False).url)
 
     except IndexError:
 
-        await ctx.send('***Did you mean ' + wikipedia.page(wiki_search_param, auto_suggest = True).title + '?***')
-        await ctx.send(wikipedia.page(wiki_search_param, auto_suggest = True).url)
+        await ctx.send('***Did you mean ' + wikipedia.page(wiki_search_param, auto_suggest=True).title + '?***')
+        await ctx.send(wikipedia.page(wiki_search_param, auto_suggest=True).url)
+
 
 @bot.command()
 async def randomwiki(ctx):
 
-        
     await ctx.send(wikipedia.page(wikipedia.random()).url)
+
 
 @bot.command()
 async def fact(ctx):
 
-        
     await ctx.send(get_fact())
+
+
+@bot.command()
+async def flag(ctx):
+
+    country = random.choice(list(vp.iso()))
+
+    await ctx.send(vp.flag_src(country))
+
+    def useless(_ctx):
+        return True
+
+    while True:
+
+        action = await bot.wait_for('message',  check=useless)
+
+        if any(i.casefold() == action.content.casefold() for i in vp.iso()[country]):
+
+            await ctx.send(action.author.display_name + ' correctly answered ' + vp.iso_code(country) + '!')
+
+            break
+
+        elif action.content.casefold() == 'show answer':
+
+            await ctx.send('The answer was ' + vp.iso_code(country))
+
+            break
+
 
 @bot.command()
 async def blackjackinfo(ctx):
@@ -600,28 +676,29 @@ async def blackjackinfo(ctx):
     await ctx.send('Have fun!')
     await ctx.send('*Note: RockyBot does not support underage gambling, play responsibly*')
 
+
 @bot.command()
 async def blackjackstats(ctx):
 
-    file = open("blackjackstats.txt","r+")
+    file = open("blackjackstats.txt", "r+")
     stat = file.readline()
     stat = stat.strip()
     stat = stat.split()
     beat, lost, tied = stat
-    string_stat = 'I have beaten ' + beat + ' players, lost to ' + lost + ' players, and tied with ' + tied + ' players'
+    string_stat = 'I have beaten ' + beat + ' players, lost to ' + \
+        lost + ' players, and tied with ' + tied + ' players'
 
     await ctx.send(string_stat)
 
-@bot.command()
-async def blackjack(ctx): 
 
-        
-    
+@bot.command()
+async def blackjack(ctx):
+
     cards = np.array(['A', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K',
-                    'A', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K',
-                    'A', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K',
-                    'A', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K',
-                    ])
+                      'A', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K',
+                      'A', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K',
+                      'A', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K',
+                      ])
 
     value = {
         '1': 1,
@@ -638,7 +715,6 @@ async def blackjack(ctx):
         'Q': 10,
         'K': 10,
     }
-    
 
     def hand_value(hand):
 
@@ -666,23 +742,21 @@ async def blackjack(ctx):
 
             return [hand_sum_1, hand_sum_11]
 
-
     def max_value(hand):
 
         if len(hand_value(hand)) == 1:
 
             return hand_value(hand)[0]
-        
+
         if len(hand_value(hand)) == 2:
 
             if hand_value(hand)[1] > 21:
 
                 return hand_value(hand)[0]
-            
+
             else:
 
                 return hand_value(hand)[1]
-        
 
     def _21check(hand, num):
 
@@ -714,8 +788,7 @@ async def blackjack(ctx):
 
                 return 'over'
 
-
-    rng = list(np.random.choice(cards, 4, replace = False))
+    rng = list(np.random.choice(cards, 4, replace=False))
 
     house = rng[:2]
     house_start = rng[:2]
@@ -725,7 +798,8 @@ async def blackjack(ctx):
 
     house_str = 'House: ' + (' '.join(map(str, house_start))) + ' | Value: ?'
 
-    player_str = 'Player: ' + (' '.join(map(str, player))) + ' | Value: ' + str(max_value(player))
+    player_str = 'Player: ' + \
+        (' '.join(map(str, player))) + ' | Value: ' + str(max_value(player))
 
     await ctx.send(house_str)
     await ctx.send(player_str)
@@ -733,8 +807,6 @@ async def blackjack(ctx):
     if _21check(player, 21) == '21':
 
         await ctx.send('21! You win!')
-        blackjack_increment("blackjackstats.txt", 1)
-        
 
     else:
 
@@ -746,120 +818,109 @@ async def blackjack(ctx):
             action = await bot.wait_for('message',  check=is_correct)
 
             if action.content == '$blackjackexit':
-                
+
                 await ctx.send('Exited Blackjack')
-                
-                break 
+
+                break
 
             if action.content == 'hit' or action.content == 'Hit':
 
                 player.append(random.choice(cards))
-                
 
-                house_str = 'House: ' + (' '.join(map(str, house_start))) + ' | Value: ?'
+                house_str = 'House: ' + \
+                    (' '.join(map(str, house_start))) + ' | Value: ?'
 
-                player_str = 'Player: ' + (' '.join(map(str, player))) + ' | Value: ' + str(max_value(player))
+                player_str = 'Player: ' + \
+                    (' '.join(map(str, player))) + \
+                    ' | Value: ' + str(max_value(player))
 
                 await ctx.send(house_str)
                 await ctx.send(player_str)
-                
 
                 # check if hand is above 21 or not
                 if _21check(player, 21) == '21':
-                    
+
                     await ctx.send('21! You win!')
-                    blackjack_increment("blackjackstats.txt", 1)
-                    
+
                     break
 
                 if _21check(player, 21) == 'over':
-                    
+
                     await ctx.send('Bust! You lose!')
-                    blackjack_increment("blackjackstats.txt", 0)
-                    
+
                     break
 
             if action.content == 'stand' or action.content == 'Stand':
 
-                
-                house_str = 'House: ' + (' '.join(map(str, house))) + ' | Value: ' + str(max_value(house))
+                house_str = 'House: ' + \
+                    (' '.join(map(str, house))) + \
+                    ' | Value: ' + str(max_value(house))
 
-                player_str = 'Player: ' + (' '.join(map(str, player))) + ' | Value: ' + str(max_value(player))
+                player_str = 'Player: ' + \
+                    (' '.join(map(str, player))) + \
+                    ' | Value: ' + str(max_value(player))
 
                 await ctx.send(house_str)
                 await ctx.send(player_str)
                 await ctx.send('---------------')
-                
 
                 if _21check(house, 21) == '21':
 
                     await ctx.send('21! You lose!')
-                    blackjack_increment("blackjackstats.txt", 0)
-                    
+
                     break
-                    
+
                 if max_value(player) < max_value(house):
 
                     await ctx.send('I have more value! You lose!')
-                    blackjack_increment("blackjackstats.txt", 0)
-                    
+
                     break
 
                 while _21check(house, 16) != 'over':
 
-
-
                     house.append(random.choice(cards))
-                    
 
-                    house_str = 'House: ' + (' '.join(map(str, house))) + ' | Value: ' + str(max_value(house))
+                    house_str = 'House: ' + \
+                        (' '.join(map(str, house))) + \
+                        ' | Value: ' + str(max_value(house))
 
-                    player_str = 'Player: ' + (' '.join(map(str, player))) + ' | Value: ' + str(max_value(player))
+                    player_str = 'Player: ' + \
+                        (' '.join(map(str, player))) + \
+                        ' | Value: ' + str(max_value(player))
 
                     await ctx.send(house_str)
                     await ctx.send(player_str)
                     await ctx.send('---------------')
 
-
                     if _21check(house, 21) == '21':
-                
+
                         await ctx.send('21! You lose!')
-                        blackjack_increment("blackjackstats.txt", 0)
-                        
+
                         break
 
                     elif _21check(house, 21) == 'over':
-                        
+
                         await ctx.send('Bust! You win!')
-                        blackjack_increment("blackjackstats.txt", 1)
-                        
+
                         break
 
                     elif max_value(player) < max_value(house):
 
                         await ctx.send('I have more value! You lose!')
-                        blackjack_increment("blackjackstats.txt", 0)
-                        
+
                         break
 
                 if max_value(player) > max_value(house):
 
                     await ctx.send('You have more value! You win!')
-                    blackjack_increment("blackjackstats.txt", 1)
-                    
+
                     break
-                
+
                 elif max_value(player) == max_value(house):
 
-
                     await ctx.send('Equal value! Tie!')
-                    blackjack_increment("blackjackstats.txt", 2)
-                    
+
                     break
-
-
-
-
 
 
 # bot ideas:
@@ -874,7 +935,7 @@ async def blackjack(ctx):
 
 
 # @bot.command(message)
-#async def spotify(ctx, user: discord.Member=None):
+# async def spotify(ctx, user: discord.Member=None):
 #     print('made it here')
 #     user = user or ctx.author
 #     print('made it here')
@@ -889,7 +950,7 @@ async def blackjack(ctx):
 t1 = time.time()
 
 bot.loop.create_task(heartbeat())
-bot.run(os.getenv('discordtoken'))
 
-# client.get_channel(745066591443746857).send('*System Restart*')
-# client.get_channel(745066591443746857).send('*Bot Online*')
+keep_alive()
+
+bot.run(os.getenv('discordtoken'))
