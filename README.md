@@ -22,4 +22,4 @@ to install dependencies from the poetry.lock file
 
 * **@awesomeplaya211 (awesomeplaya211#4051)** - *Main Dev*
 * **@Banshee-72**
-* **Numberz#4966** - *Made [Profile Picture](https://raw.githubusercontent.com/awesomeplaya211/RockyBot/main/asseats/pfp.jpg)*
+* **Numberz#4966** - *Made [Profile Picture](https://raw.githubusercontent.com/awesomeplaya211/RockyBot/main/assets/pfp.jpg)*
