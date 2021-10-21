@@ -16,7 +16,7 @@ uwuify = "^1.1.0"
 randfacts = "^0.9.1"
 Flask = "^2.0.1"
 discord-py-slash-command = "^3.0.1"
-vexpy = "^0.0.7"
+vexpy = "^0.1.1"
 
 [tool.poetry.dev-dependencies]
 
