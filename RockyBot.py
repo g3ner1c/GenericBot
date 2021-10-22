@@ -127,7 +127,7 @@ _8ball = ["Certainly yes", "Definentely Yes", "99.9% chance", "The chances are h
 
 
 @bot.command()
-async def ai(ctx, input):
+async def ai(ctx, *,input):
     response = requests.post(os.getenv('aiurl'), data='{"context":"' + input + '","topP":0.9,"temp":0.8,"response_length":128,"remove_input":true}').text
     generation = json.loads(response)[0]['generated_text']
     await ctx.send(generation)
@@ -425,13 +425,13 @@ async def weather(ctx, *, location):
 
 @bot.command()
 async def info(ctx):
-    await ctx.send('*RockyBot v1.4.0 - main*\n' \
+    await ctx.send('**RockyBot v1.4.0 - *main**\n' \
         'Hi! I am a multipurpose Discord bot developed by awesomeplaya211#4051!\n' \
         'My source code is available on GitHub by using *$github*!\n' \
         'Credits:\n' \
-        '*awesomeplaya211#4051* - Main Dev\n' \
-        '*@Banshee-72 on GitHub*\n' \
-        '*Numberz#4966* - Made Profile Picture')
+        '**awesomeplaya211#4051** - Main Dev\n' \
+        '**@Banshee-72 on GitHub** - Created $ai and helped vastly with major optimizations\n' \
+        '**Numberz#4966** - Made profile picture')
 
 
 @bot.command()
