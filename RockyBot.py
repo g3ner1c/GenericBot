@@ -437,7 +437,7 @@ async def info(ctx):
 
 @bot.command()
 async def canon(ctx):
-    await ctx.send('*RockyBot is cannonicaly a genderless asexual protogen that lives in cyberspace*\n' \
+    await ctx.send('RockyBot is cannonicaly a genderless asexual protogen that lives in cyberspace\n' \
         'They enjoy programming and playing games and are *totally* not a virtual projecton of the developer')
 
 
