@@ -428,7 +428,7 @@ async def info(ctx):
     await ctx.send('**RockyBot v1.4.0 - *main**\n' \
         'Hi! I am a multipurpose Discord bot developed by awesomeplaya211#4051!\n' \
         'My source code is available on GitHub by using *$github*!\n' \
-        'Use $canon for a story!'
+        'Use $canon for a story!\n'
         'Credits:\n' \
         '**awesomeplaya211#4051** - Main Dev\n' \
         '**@Banshee-72 on GitHub** - Created $ai and helped vastly with major optimizations\n' \
