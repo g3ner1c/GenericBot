@@ -425,7 +425,13 @@ async def weather(ctx, *, location):
 
 @bot.command()
 async def info(ctx):
-    await ctx.send('*RockyBot v1.4.0 - main*\nHi! I am an emotionless bot programmed to feign a personality to you!\nMy owner is awesomeplaya211#4051\nDM him for bug reports or suggestions\nNotable contributions (@Banshee-72 on GitHub)\n**I am now open source!**\n**Use $github for my Github page!**\nProfile picture by Johnny Boy#4966')
+    await ctx.send('*RockyBot v1.4.0 - main*\n' \
+        'Hi! I am a multipurpose Discord bot developed by awesomeplaya211#4051!\n' \
+        'My source code is available on GitHub by using *$github*!\n' \
+        'Credits:\n' \
+        '*awesomeplaya211#4051* - Main Dev\n' \
+        '*@Banshee-72 on GitHub*\n' \
+        '*Numberz#4966* - Made Profile Picture')
 
 
 @bot.command()
@@ -580,16 +586,6 @@ async def uwu(ctx, text):
 
 
 @bot.command()
-async def stats(ctx):
-
-    file = open("stats.txt", "r+")
-    stat = file.readline()
-    stat = int(stat.strip())
-    string_stat = 'I have been called ' + str(stat) + ' times'
-    await ctx.send(string_stat)
-
-
-@bot.command()
 async def hug(ctx):
 
     await ctx.send('⊂(・▽・⊂)')
@@ -675,20 +671,6 @@ async def blackjackinfo(ctx):
     await ctx.send("The game can end if:\nThe player gets 21 (win)\nThe dealer gets 21 (lose)\nThe player goes over 21 (lose)\nThe dealer goes over 21 (win)\nIf the dealer has more value than the player during its turn (lose)\nAt the end of both turns the player has more value than the dealer (win)\nAt the end of both turns the player and the dealer have equal value (tie)")
     await ctx.send('Have fun!')
     await ctx.send('*Note: RockyBot does not support underage gambling, play responsibly*')
-
-
-@bot.command()
-async def blackjackstats(ctx):
-
-    file = open("blackjackstats.txt", "r+")
-    stat = file.readline()
-    stat = stat.strip()
-    stat = stat.split()
-    beat, lost, tied = stat
-    string_stat = 'I have beaten ' + beat + ' players, lost to ' + \
-        lost + ' players, and tied with ' + tied + ' players'
-
-    await ctx.send(string_stat)
 
 
 @bot.command()
