@@ -519,16 +519,15 @@ async def on_message(ctx):
     if ctx.author == bot.user:
         return
 
-    if (ctx.content.startswith('gm') or ctx.content.startswith('GM') or ctx.content.startswith('good morning') or ctx.content.startswith('Good morning')) and (ctx.content != 'gmas') and (ctx.content != 'GMAS'):
+    message = str(ctx.content).lower()
 
+    if (message.find("gm") != -1 or message.find('good morning') != -1):
         await ctx.channel.send('Good morning!')
 
-    if ctx.content.startswith('gn') or ctx.content.startswith('GN') or ctx.content.startswith('good night') or ctx.content.startswith('Good night'):
-
+    if (message.find("gn") != -1 or message.find('good night') != -1):
         await ctx.channel.send('Good night!')
 
-    if ctx.content.startswith('gg') or ctx.content.startswith('GG'):
-
+    if (message.find("gg") != -1 or message.find('good game') != -1):
         await ctx.channel.send('Good game!')
 
 
