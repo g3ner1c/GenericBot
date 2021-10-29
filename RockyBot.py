@@ -18,8 +18,8 @@ from discord.ext import commands, tasks
 from discord.utils import escape_markdown
 from discord_slash import SlashCommand
 from dotenv import load_dotenv
-from pyowm.owm import OWM
 from pretty_help import PrettyHelp
+from pyowm.owm import OWM
 from randfacts import get_fact
 from scipy.interpolate import make_interp_spline
 
@@ -129,74 +129,64 @@ _8ball = ["Certainly yes", "Definentely Yes", "99.9% chance", "The chances are h
           ]
 
 
-@bot.command()
-async def ai(ctx, *,input):
+@bot.command(brief='Completes text using AI',description='Completes the input text using the GPT-3 language model from OpenAI to imitate human text')
+async def ai(ctx, *, input):
     response = requests.post(os.getenv('aiurl'), data='{"context":"' + input + '","topP":0.9,"temp":0.8,"response_length":128,"remove_input":true}').text
     generation = json.loads(response)[0]['generated_text']
     await ctx.send(generation)
 
 
-@bot.command()
+@bot.command(brief='MIT license',description='Returns the MIT license to myself')
 async def license(ctx):
     license = 'Copyright © 2021 awesomeplaya211 & Banshee-72 \n Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: \n The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. \nTHE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.'
     await ctx.send('By using the bot you agree to the following license:')
     await ctx.send(license)
 
 
-@bot.command()
-# buggy lol
-async def graphing(ctx, subst, equ):
-    mequ = equ
-    x = np.linspace(-125, 125, 2501)
-    y = []
-    for i in range(len(x)):
-        value = x[i]
-        equ = re.sub('x', str(value), equ)
-        equ = equ[2:]
-        print(equ)
-        try:
-            res = eval(equ)
-        except:
-            res = 'Something Failed'
-        y.append(res)
-        equ = mequ
-    plt.xlim(-125, 125)
-    plt.ylim(-25, max(y)*1.1)
-    plt.plot(x, y)
-    plt.savefig("temp/graph.png")
+# @bot.command()
+# # buggy lol
+# async def graphing(ctx, subst, equ):
+#     mequ = equ
+#     x = np.linspace(-125, 125, 2501)
+#     y = []
+#     for i in range(len(x)):
+#         value = x[i]
+#         equ = re.sub('x', str(value), equ)
+#         equ = equ[2:]
+#         print(equ)
+#         try:
+#             res = eval(equ)
+#         except:
+#             res = 'Something Failed'
+#         y.append(res)
+#         equ = mequ
+#     plt.xlim(-125, 125)
+#     plt.ylim(-25, max(y)*1.1)
+#     plt.plot(x, y)
+#     plt.savefig("temp/graph.png")
 
-    file = discord.File("temp/graph.png")
-    embed = discord.Embed()
-    embed.set_image(url="attachment://graph.png")
-    await ctx.send(embed=embed, file=file)
-    plt.clf()
-
-
-@bot.command()
-async def hello(ctx):
-    await ctx.send('Hello!')
+#     file = discord.File("temp/graph.png")
+#     embed = discord.Embed()
+#     embed.set_image(url="attachment://graph.png")
+#     await ctx.send(embed=embed, file=file)
+#     plt.clf()
 
 
-@bot.command()
+@bot.command(brief='Dev command',description='Dev command')
 async def say(ctx, term):
     if ctx.author.id == 538921994645798915:
 
         await channel_say.send(term)
 
 
-@bot.command()
+@bot.command(brief='Dev command',description='Dev command')
 async def dm(ctx, user: discord.User, *, message):
     if ctx.author.id == 538921994645798915:
 
         await user.send(message)
 
 
-@bot.command()
-async def test(ctx):
-    await ctx.send(ctx.author)
-
-
-@bot.command()
+@bot.command(brief='Shows a nice piece of art',description='Scrapes a post from the top 100 posts from the past week in r/art (no nsfw obviously)')
 async def art(ctx):
 
     subreddit = await reddit.subreddit("art")
@@ -219,7 +209,7 @@ async def art(ctx):
     await ctx.send(str(reddit_post.score)+' upvotes')
 
 
-@bot.command()
+@bot.command(brief='Shows a cat picture :D',description='Scrapes a post from the top 100 posts from the past week in r/cats')
 async def cat(ctx):
 
     subreddit = await reddit.subreddit("cats")
@@ -242,7 +232,7 @@ async def cat(ctx):
     await ctx.send(str(reddit_post.score)+' upvotes')
 
 
-@bot.command()
+@bot.command(brief='Shows top 10 trending news from r/news',description='Scrapes the top 10 posts from the hot feed of r/news')
 async def news(ctx):
 
     subreddit = await reddit.subreddit("news")
@@ -281,7 +271,7 @@ async def news(ctx):
 #         await ctx.send(random.choice(lines))
 
 
-@bot.command()
+@bot.command(brief='Asks a question',description='Asks a question')
 async def truth(ctx):
 
     with open("assets/truth.txt") as file:
@@ -289,14 +279,8 @@ async def truth(ctx):
         lines = file.readlines()
         await ctx.send(random.choice(lines))
 
-# @bot.command()
-# async def calc(ctx,equ):
-#     await ctx.send(str(eval(equ)))
 
-# too complicated ^
-
-
-@bot.command()
+@bot.command(brief='Dev command',description='Dev command')
 async def exec(ctx, *, command):
 
     if ctx.author.id == 538921994645798915:
@@ -308,12 +292,12 @@ async def exec(ctx, *, command):
         print(ctx.author, 'attempted to execute:\n', ctx.content)
 
 
-@bot.command()
+@bot.command(brief='Returns latency to the server',description='Returns latency to the server in milliseconds')
 async def ping(ctx):
     await ctx.send(f'Pong! Latency: {round(bot.latency * 1000, 3)}ms')
 
 
-@bot.command()
+@bot.command(brief='Returns a latency graph',description='Returns a latency graph over the past 10 minutes')
 async def netgraph(ctx):
 
     time_since_ping = round(time.time() - time_ping)
@@ -347,7 +331,7 @@ async def netgraph(ctx):
     plt.clf()
 
 
-@bot.command()
+@bot.command(brief='Gives a weather report at the location',description='Gives a weather report at the location with temperature, wind speed, humidity, air pressure, and a forecast chart')
 async def weather(ctx, *, location):
 
     owm = OWM('a4348bddc4faa37365b82cee8c3136da')
@@ -359,7 +343,7 @@ async def weather(ctx, *, location):
     reg = owm.city_id_registry()
     list_of_locations = reg.locations_for(location)
 
-    embedVar = discord.Embed(title="Weather in " + location, color=0xff3131)
+    embedVar = discord.Embed(title="Weather in " + location, color=0xae4dff)
 
     embedVar.add_field(name="Current Temperature", value=
         str(w.temperature('fahrenheit')['temp']) + ' °F / ' +
@@ -423,12 +407,9 @@ async def weather(ctx, *, location):
     plt.clf()
 
 
-#                               put repo branch in $info here for easier testing
-#                                                vvvvvvvv
-
-@bot.command()
+@bot.command(brief='General information and credits',description='General information and credits')
 async def info(ctx):
-    await ctx.send('**RockyBot v1.4.0 - *main**\n' \
+    await ctx.send('**RockyBot v1.4.0**\n' \
         'Hi! I am a multipurpose Discord bot developed by awesomeplaya211#4051!\n' \
         'My source code is available on GitHub by using *$github*!\n' \
         'Use $canon for a story!\n'
@@ -438,13 +419,13 @@ async def info(ctx):
         '**Numberz#4966** - Made profile picture')
 
 
-@bot.command()
+@bot.command(brief='A nice backstory',description='A nice backstory')
 async def canon(ctx):
     await ctx.send('RockyBot is cannonicaly a genderless asexual protogen that lives in cyberspace\n' \
         'They enjoy programming and playing games and are *totally* not a virtual projecton of the developer')
 
 
-@bot.command()
+@bot.command(brief='Shows my profile picture',description='Shows my profile picture made by Numberz#4966')
 async def pfp(ctx):
 
     file = discord.File("assets/pfp.jpg")
@@ -453,19 +434,19 @@ async def pfp(ctx):
     await ctx.send(embed=embed, file=file)
 
 
-@bot.command()
+@bot.command(brief='My GitHub Repository',description='My GitHub Repository')
 async def github(ctx):
 
     await ctx.send('https://github.com/awesomeplaya211/RockyBot')
 
 
-@bot.command()
+@bot.command(brief='Add me to your server!',description='Add me to your server!')
 async def invite(ctx):
     await ctx.send('Add me to your server!')
     await ctx.send('https://discord.com/api/oauth2/authorize?client_id=866481377151156304&permissions=259846044736&scope=applications.commands%20bot')
 
 
-@bot.command()
+@bot.command(brief='Flips a coin',description='Flips a coin')
 async def flip(ctx):
 
     if bool(random.randint(0, 1)):
@@ -475,12 +456,12 @@ async def flip(ctx):
         await ctx.send('Tails')
 
 
-@bot.command()
+@bot.command(brief='Ask the 8ball a question!',description='Ask the 8ball a question!')
 async def ball(ctx):
     await ctx.send(random.choice(_8ball))
 
 
-@bot.command()
+@bot.command(brief='Play rock paper scissors!',description='Play rock paper scissors!')
 async def rps(ctx, choice):
 
     if choice == 'rock':
@@ -534,7 +515,7 @@ async def rps(ctx, choice):
 #         await ctx.channel.send('Good game!')
 
 
-@bot.command()
+@bot.command(brief='Status check with uptime',description='Status check with uptime')
 async def status(ctx):
     t2 = time.time()
     await ctx.send('*Bot Online*')
@@ -545,7 +526,7 @@ async def status(ctx):
     await ctx.send(string)
 
 
-@bot.command()
+@bot.command(brief='Kills bot (Dev command)',description='Kills bot (Dev command)')
 async def kill(ctx):
 
     if ctx.author.id == 538921994645798915:
@@ -557,59 +538,42 @@ async def kill(ctx):
         await ctx.send("You're not my dev! >:(")
         print(ctx.author, 'attempted to kill bot')
 
+
 # @bot.command()
-# async def help(ctx):
-#        await ctx.send('$info - information about me\n$github - my github page\n$status - bot status\n$invite - add me to your server\n$flip - flips a coin\n$8ball - 100% accurate answer to any question\n$rps - Rock Paper Scissors\n$hmm - hmm\n$kill - kills me **dont do this plz :C**')
-#        await ctx.send('$secret - its a secret! >_<\n$uwuify - UWU\n$stats - statistics\n$hug - hugs :D\n$blackjack - play me in blackjack!\n$blackjackstats - blackjack stats!\n$wiki - search wikipedia\n$fact - tell you a random fact\n$ping - latency test\n$netgraph - latency graph\n$art - top 100 post from r/art from the past week\n$cat - top 100 post from r/cats from the past week\n$shitpost or $196 - shitpost generator (sourced from Johnny Boy#4966 and various shitpost subreddits)')
+# # debug
+# async def uwu(ctx, text):
+#     uwu = text
+#     uwuified = ''
+#     for i in range(len(uwu)):
+
+#         if uwu[i] == 'you':
+#             uwu[i] = 'uwu'
+
+#     for i in uwu:
+
+#         uwuified += str(i) + ' '
+
+#     uwuified.strip()
+#     uwuified = uwuify.uwu(uwuified)
+#     await ctx.send(uwuified + 'uwu')
 
 
-@bot.command()
-async def secret(ctx):
-    await ctx.send('https://media.tenor.com/images/7598d103a735d5568964e4967e42823d/tenor.gif')
-    time.sleep(3)
-    await ctx.send('lol baited')
-
-
-@bot.command()
-async def copycat(ctx):
-    await ctx.send(ctx)
-
-
-@bot.command()
-# debug
-async def uwu(ctx, text):
-    uwu = text
-    uwuified = ''
-    for i in range(len(uwu)):
-
-        if uwu[i] == 'you':
-            uwu[i] = 'uwu'
-
-    for i in uwu:
-
-        uwuified += str(i) + ' '
-
-    uwuified.strip()
-    uwuified = uwuify.uwu(uwuified)
-    await ctx.send(uwuified + 'uwu')
-
-
-@bot.command()
+@bot.command(brief='Hugs :D',description='Hugs :D')
 async def hug(ctx):
 
     await ctx.send('⊂(・▽・⊂)')
 
 
-@bot.command()
-async def setlang(ctx, lang):
+@bot.command(brief='Sets which language Wikipedia $wiki searches through',description='Sets which language Wikipedia $wiki searches through using ISO 639-1 codes')
+async def wikilang(ctx, language):
 
-    wikipedia.set_lang(lang)
-    wiki_lang = 'Language set to ' + wikipedia.languages()[lang]
+    wikipedia.set_lang(language)
+    wiki_lang = 'Language set to ' + wikipedia.languages()[language]
 
     await ctx.send(wiki_lang)
 
 
-@bot.command()
+@bot.command(brief='Searches through Wikipedia for an article that matches the input',description='Searches through Wikipedia for an article that matches the input')
 async def wiki(ctx, *, search):
 
     # IMPORTANT!:  ^^^ asterisk will make the str after command into 1 arg regardless of spaces
@@ -630,19 +594,19 @@ async def wiki(ctx, *, search):
         await ctx.send(wikipedia.page(wiki_search_param, auto_suggest=True).url)
 
 
-@bot.command()
+@bot.command(brief='Returns a random Wikipedia page',description='Returns a random Wikipedia page')
 async def randomwiki(ctx):
 
     await ctx.send(wikipedia.page(wikipedia.random()).url)
 
 
-@bot.command()
+@bot.command(brief='Returns a random fact',description='Returns a random fact')
 async def fact(ctx):
 
     await ctx.send(get_fact())
 
 
-@bot.command()
+@bot.command(brief="Try and guess a country's flag!",description="Try and guess a country's flag! Shows a random country flag and try and answer what country it is! Say show answer if you're stuck")
 async def flag(ctx):
 
     country = random.choice(list(vp.iso()))
@@ -669,7 +633,7 @@ async def flag(ctx):
             break
 
 
-@bot.command()
+@bot.command(brief='How to play Blackjack',description='How to play Blackjack')
 async def blackjackinfo(ctx):
 
     await ctx.send('*Blackjack* also known as *Twenty-One* or *Vingt-et-un* is the most popular casino game in the world where the objective is to get a value of 21.')
@@ -682,7 +646,7 @@ async def blackjackinfo(ctx):
     await ctx.send('*Note: RockyBot does not support underage gambling, play responsibly*')
 
 
-@bot.command()
+@bot.command(brief='Play Blackjack!',description='Play Blackjack!')
 async def blackjack(ctx):
 
     cards = np.array(['A', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K',
@@ -923,19 +887,6 @@ async def blackjack(ctx):
 # ace can be both 1 or 11
 # face cards are 10
 # <= 16 bot takes >= 17 bot stands
-
-
-# @bot.command(message)
-# async def spotify(ctx, user: discord.Member=None):
-#     print('made it here')
-#     user = user or ctx.author
-#     print('made it here')
-#     for activity in user.activities:
-#         print('made it here')
-#         if isinstance(activity, discord.Spotify):
-#             print('made it here')
-#             await ctx.send(f"{user} is listening to {activity.title} by {activity.artist}")
-#             print('made it here')
 
 
 t1 = time.time()
