@@ -19,6 +19,7 @@ from discord.utils import escape_markdown
 from discord_slash import SlashCommand
 from dotenv import load_dotenv
 from pyowm.owm import OWM
+from pretty_help import PrettyHelp
 from randfacts import get_fact
 from scipy.interpolate import make_interp_spline
 
@@ -27,6 +28,8 @@ from keep_alive import keep_alive
 load_dotenv()
 
 bot = commands.Bot(intents=discord.Intents.default(), command_prefix='$')
+
+bot.help_command = PrettyHelp(color=0xae4dff)
 
 global channel_say
 channel_say = 0
@@ -511,24 +514,24 @@ async def rps(ctx, choice):
         await ctx.send('I call hacks')
 
 
-@bot.event
-async def on_message(ctx):
+# @bot.event
+# async def on_message(ctx):
 
-    await bot.process_commands(ctx)
+#     await bot.process_commands(ctx)
 
-    if ctx.author == bot.user:
-        return
+#     if ctx.author == bot.user:
+#         return
 
-    message = str(ctx.content).lower()
+#     message = str(ctx.content).lower()
 
-    if (message.find("gm") != -1 or message.find('good morning') != -1):
-        await ctx.channel.send('Good morning!')
+#     if (message.find("gm") != -1 or message.find('good morning') != -1):
+#         await ctx.channel.send('Good morning!')
 
-    if (message.find("gn") != -1 or message.find('good night') != -1):
-        await ctx.channel.send('Good night!')
+#     if (message.find("gn") != -1 or message.find('good night') != -1):
+#         await ctx.channel.send('Good night!')
 
-    if (message.find("gg") != -1 or message.find('good game') != -1):
-        await ctx.channel.send('Good game!')
+#     if (message.find("gg") != -1 or message.find('good game') != -1):
+#         await ctx.channel.send('Good game!')
 
 
 @bot.command()
