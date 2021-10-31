@@ -193,6 +193,27 @@ async def mute(ctx, member: discord.Member):
         await ctx.send(embed=embed)
 
 
+@bot.command(brief='Unmute command',description='Unmutes user. Administrator privileges required')
+async def mute(ctx, member: discord.Member):
+
+    if  ctx.author.id == 538921994645798915:
+
+        guild = ctx.guild
+        role = discord.utils.get(guild.roles, name='Muted')
+
+        await member.remove_roles(role)
+
+        embed=discord.Embed(title="Redemption Arc :)", description="{0} has been unmuted".format(member), color=0xae4dff)
+        
+        await ctx.send(embed=embed)
+
+    else:
+
+        embed=discord.Embed(title="403 Forbidden :(", description="You don't have administrator privileges", color=0xae4dff)
+
+        await ctx.send(embed=embed)       
+
+
 @bot.command(brief='Kick command',description='Kicks user out of the server. Administrator privileges required')
 async def kick(ctx, member: discord.Member):
 
