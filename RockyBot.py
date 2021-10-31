@@ -29,7 +29,7 @@ load_dotenv()
 
 bot = commands.Bot(intents=discord.Intents.default(), command_prefix='$')
 
-bot.help_command = PrettyHelp(color=0xae4dff)
+bot.help_command = PrettyHelp(color=0xae4dff) # 0xae4dff should be used for all embeds
 
 global channel_say
 channel_say = 0
@@ -170,6 +170,65 @@ async def license(ctx):
 #     embed.set_image(url="attachment://graph.png")
 #     await ctx.send(embed=embed, file=file)
 #     plt.clf()
+
+
+@bot.command(brief='Mute command',description='Mutes user. Administrator privileges required')
+async def mute(ctx, member: discord.Member):
+
+    if  ctx.author.id == 538921994645798915:
+
+        guild = ctx.guild
+        role = discord.utils.get(guild.roles, name='Muted')
+
+        await member.add_roles(role)
+
+        embed=discord.Embed(title="Bad user >:(", description="{0} has been muted".format(member), color=0xae4dff)
+        
+        await ctx.send(embed=embed)
+
+    else:
+
+        embed=discord.Embed(title="403 Forbidden :(", description="You don't have administrator privileges", color=0xae4dff)
+
+        await ctx.send(embed=embed)
+
+
+@bot.command(brief='Unmute command',description='Unmutes user. Administrator privileges required')
+async def unmute(ctx, member: discord.Member):
+
+    if  ctx.author.id == 538921994645798915:
+
+        guild = ctx.guild
+        role = discord.utils.get(guild.roles, name='Muted')
+
+        await member.remove_roles(role)
+
+        embed=discord.Embed(title="Redemption Arc :)", description="{0} has been unmuted".format(member), color=0xae4dff)
+        
+        await ctx.send(embed=embed)
+
+    else:
+
+        embed=discord.Embed(title="403 Forbidden :(", description="You don't have administrator privileges", color=0xae4dff)
+
+        await ctx.send(embed=embed)       
+
+
+@bot.command(brief='Kick command',description='Kicks user out of the server. Administrator privileges required')
+async def kick(ctx, member: discord.Member):
+
+    if ctx.author.id == 538921994645798915:
+
+        await member.kick()
+
+        embed = discord.Embed(title = "{0} has been kicked".format(member), description = "Hope you didn't do that by accident lol", color = 0xae4dff)
+        
+        await ctx.send(embed=embed)
+
+    else:
+
+        embed=discord.Embed(title="403 Forbidden :(", description="You don't have administrator privileges", color=0xae4dff)
+        await ctx.send(embed=embed)
 
 
 @bot.command(brief='Dev command',description='Dev command')
