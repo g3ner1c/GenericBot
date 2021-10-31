@@ -194,7 +194,7 @@ async def mute(ctx, member: discord.Member):
 
 
 @bot.command(brief='Unmute command',description='Unmutes user. Administrator privileges required')
-async def mute(ctx, member: discord.Member):
+async def unmute(ctx, member: discord.Member):
 
     if  ctx.author.id == 538921994645798915:
 
