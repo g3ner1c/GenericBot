@@ -18,6 +18,15 @@ poetry install
 
 to install dependencies from the poetry.lock file
 
+### TODO
+
+```sh
+organize code to cogs
+optimize $blackjack
+embed $blackjack
+general embedding of commands with lots of info
+```
+
 ### Credits
 
 * **@awesomeplaya211 (awesomeplaya211#4051)** - *Main Dev*

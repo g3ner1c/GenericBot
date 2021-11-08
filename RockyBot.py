@@ -3,7 +3,6 @@ import json
 import math
 import os
 import random
-import re
 import time
 
 import asyncpraw
@@ -11,11 +10,9 @@ import discord
 import matplotlib.pyplot as plt
 import numpy as np
 import requests
-import uwuify
 import vexpy as vp
 import wikipedia
 from discord.ext import commands, tasks
-from discord.utils import escape_markdown
 from discord_slash import SlashCommand
 from dotenv import load_dotenv
 from pretty_help import PrettyHelp
