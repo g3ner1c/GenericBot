@@ -172,7 +172,7 @@ async def license(ctx):
 @bot.command(brief='Mute command',description='Mutes user. Administrator privileges required')
 async def mute(ctx, member: discord.Member):
 
-    if  ctx.author.id == 538921994645798915:
+    if ctx.message.author.guild_permissions.administrator:
 
         guild = ctx.guild
         role = discord.utils.get(guild.roles, name='Muted')
@@ -193,7 +193,7 @@ async def mute(ctx, member: discord.Member):
 @bot.command(brief='Unmute command',description='Unmutes user. Administrator privileges required')
 async def unmute(ctx, member: discord.Member):
 
-    if  ctx.author.id == 538921994645798915:
+    if ctx.message.author.guild_permissions.administrator:
 
         guild = ctx.guild
         role = discord.utils.get(guild.roles, name='Muted')
@@ -214,7 +214,7 @@ async def unmute(ctx, member: discord.Member):
 @bot.command(brief='Kick command',description='Kicks user out of the server. Administrator privileges required')
 async def kick(ctx, member: discord.Member):
 
-    if ctx.author.id == 538921994645798915:
+    if ctx.message.author.guild_permissions.administrator:
 
         await member.kick()
 
