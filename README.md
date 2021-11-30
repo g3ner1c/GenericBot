@@ -29,6 +29,6 @@ general embedding of commands with lots of info
 
 ### Credits
 
-* **@awesomeplaya211 (awesomeplaya211#4051)** - *Main Dev*
+* **@awesomeplaya211 (awesomeplaya211#5215)** - *Main Dev*
 * **@Banshee-72** - *Created $ai and helped vastly with major optimizations*
 * **Numberz#4966** - *Made [Profile Picture](https://raw.githubusercontent.com/awesomeplaya211/RockyBot/main/assets/pfp.jpg)*
