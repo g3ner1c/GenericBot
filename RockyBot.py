@@ -237,7 +237,7 @@ async def kick(ctx, member: discord.Member):
 async def user(ctx, member: discord.Member):
 
     embed=discord.Embed(title="User Information", color=0xae4dff)
-    embed.add_field(name='Server', value='*'+str(member.guild)+'*', inline=False)
+    embed.add_field(name='Server', value='**'+str(member.guild)+'**', inline=False)
     embed.add_field(name='Username', value=member, inline=False)
     embed.add_field(name='Server Nickname', value=member.nick, inline=False)
     embed.add_field(name='ID', value='`'+str(member.id)+'`', inline=False)
