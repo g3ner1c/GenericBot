@@ -24,7 +24,12 @@ from keep_alive import keep_alive
 
 load_dotenv()
 
-bot = commands.Bot(intents=discord.Intents.default(), command_prefix='$')
+intents = discord.Intents.default()
+
+intents.presences = True
+intents.members = True
+
+bot = commands.Bot(intents=intents, command_prefix='$')
 
 bot.help_command = PrettyHelp(color=0xae4dff) # 0xae4dff should be used for all embeds
 
