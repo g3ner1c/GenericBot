@@ -228,6 +228,10 @@ async def kick(ctx, member: discord.Member):
         await ctx.send(embed=embed)
 
 
+@bot.command(brief='Checks status of a user',description='Checks status of a user')
+async def userstatus(ctx, member: discord.Member):
+    await ctx.send(str(member.status))
+
 @bot.command(brief='Dev command',description='Dev command')
 async def say(ctx, term):
     if ctx.author.id == 538921994645798915:
