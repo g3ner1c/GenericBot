@@ -223,7 +223,7 @@ async def kick(ctx, member: discord.Member):
 
         await member.kick()
 
-        embed = discord.Embed(title = "{0} has been kicked".format(member), description = "Hope you didn't do that by accident lol", color = 0xae4dff)
+        embed=discord.Embed(title = "{0} has been kicked".format(member), description = "Hope you didn't do that by accident lol", color = 0xae4dff)
         
         await ctx.send(embed=embed)
 
@@ -235,7 +235,13 @@ async def kick(ctx, member: discord.Member):
 
 @bot.command(brief='Checks status of a user',description='Checks status of a user')
 async def userstatus(ctx, member: discord.Member):
-    await ctx.send(str(member.status))
+
+    embed=discord.Embed(title="User Status", color=0xae4dff)
+    embed.add_field(name='User', value=member, inline=False)
+    embed.add_field(name='Status', value=str(member.status), inline=True)
+    embed.add_field(name='Activity', value=str(member.activity), inline=True)
+    await ctx.send(embed=embed)
+
 
 @bot.command(brief='Dev command',description='Dev command')
 async def say(ctx, term):
