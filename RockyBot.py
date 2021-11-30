@@ -233,14 +233,21 @@ async def kick(ctx, member: discord.Member):
         await ctx.send(embed=embed)
 
 
-@bot.command(brief='Checks status of a user',description='Checks status of a user')
-async def userstatus(ctx, member: discord.Member):
+@bot.command(brief='Returns user info',description='Returns user info')
+async def user(ctx, member: discord.Member):
 
-    embed=discord.Embed(title="User Status", color=0xae4dff)
-    embed.add_field(name='User', value=member, inline=False)
-    embed.add_field(name='Status', value=str(member.status), inline=True)
-    embed.add_field(name='Activity', value=str(member.activity), inline=True)
+    embed=discord.Embed(title="User Information", color=0xae4dff)
+    embed.add_field(name='Server', value='*'+str(member.guild)+'*', inline=False)
+    embed.add_field(name='Username', value=member, inline=False)
+    embed.add_field(name='Server Nickname', value=member.nick, inline=False)
+    embed.add_field(name='ID', value='`'+str(member.id)+'`', inline=False)
+    embed.add_field(name='Status', value='`'+str(member.status)+'`', inline=False)
+    embed.add_field(name='Joined', value='`'+str(member.joined_at)+'`', inline=False)
+    embed.add_field(name='Role', value=str(member.top_role), inline=False)
+
+    # embed.add_field(name='Activity Details', value=str(member.activity.details), inline=False)
     await ctx.send(embed=embed)
+
 
 
 @bot.command(brief='Dev command',description='Dev command')
