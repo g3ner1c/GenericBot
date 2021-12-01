@@ -4,6 +4,7 @@ import math
 import os
 import random
 import time
+import datetime
 
 import asyncpraw
 import discord
@@ -244,6 +245,8 @@ async def user(ctx, member: discord.Member):
     embed.add_field(name='Status', value='`'+str(member.status)+'`', inline=False)
     embed.add_field(name='Joined', value='`'+str(member.joined_at)+'`', inline=False)
     embed.add_field(name='Role', value=str(member.top_role), inline=False)
+    
+    embed.timestamp = datetime.datetime.utcnow()
 
     # embed.add_field(name='Activity Details', value=str(member.activity.details), inline=False)
     await ctx.send(embed=embed)
