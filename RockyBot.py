@@ -349,7 +349,7 @@ async def news(ctx):
             count += 1
 
     num = 0
-    embed = discord.Embed()
+    embed = discord.Embed(color=0xae4dff)
     embedstr = ''
     for post in post_list:
 
@@ -431,7 +431,7 @@ async def netgraph(ctx):
     plt.savefig("temp/netgraph.png")
 
     file = discord.File("temp/netgraph.png")
-    embed = discord.Embed()
+    embed = discord.Embed(color=0xae4dff)
     embed.set_image(url="attachment://netgraph.png")
     embed.set_footer(text=((f'Requested by {ctx.message.author.display_name} (') + str(ctx.message.author.id) + ')'))
     embed.timestamp = datetime.datetime.utcnow()
@@ -509,7 +509,7 @@ async def weather(ctx, *, location):
     plt.savefig("temp/forecast.png")
 
     file = discord.File("temp/forecast.png")
-    embed = discord.Embed()
+    embed = discord.Embed(color=0xae4dff)
     embed.set_image(url="attachment://forecast.png")
     embed.set_footer(text=((f'Requested by {ctx.message.author.display_name} (') + str(ctx.message.author.id) + ')'))
     embed.timestamp = datetime.datetime.utcnow()
@@ -539,7 +539,7 @@ async def canon(ctx):
 async def pfp(ctx):
 
     file = discord.File("assets/pfp.jpg")
-    embed = discord.Embed()
+    embed = discord.Embed(color=0xae4dff)
     embed.set_image(url="attachment://pfp.jpg")
     await ctx.send(embed=embed, file=file)
 
