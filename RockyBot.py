@@ -601,14 +601,14 @@ async def status(ctx):
     
     t2 = time.time()
 
-    time_online = ('Online for ' +
+    time_online = (
     str(math.floor((t2-t1)/3600)) + ' hours ' +
     str(math.floor(((t2-t1) % 3600)/60)) + ' minutes ' +
     str(round((t2-t1) % 60, 3)) + ' seconds')
 
     embed=discord.Embed(title="Status", color=0xae4dff)
-    embed.add_field(name=time_online, value='', inline=False)
-    embed.add_field(name="Online Since", value='`'+t1+'`', inline=False)
+    embed.add_field(name='Online for', value=time_online, inline=False)
+    embed.add_field(name="Online since", value='`'+str(t1)+'`', inline=False)
     embed.timestamp = datetime.datetime.utcnow()
 
     await ctx.send(embed=embed)
