@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import json
 import math
 import os
@@ -24,7 +25,12 @@ from keep_alive import keep_alive
 
 load_dotenv()
 
-bot = commands.Bot(intents=discord.Intents.default(), command_prefix='$')
+intents = discord.Intents.default()
+
+intents.presences = True
+intents.members = True
+
+bot = commands.Bot(intents=intents, command_prefix='$')
 
 bot.help_command = PrettyHelp(color=0xae4dff) # 0xae4dff should be used for all embeds
 
@@ -41,7 +47,7 @@ time_uwu = time.time()
 reddit = asyncpraw.Reddit(
     client_id="MZgXIeYJm5rsrFHm9uWCeA",
     client_secret=os.getenv('reddittoken'),
-    user_agent="discord:GenericBot:v1.4.0 (by /u/awesomeplaya211)"
+    user_agent="discord:GenericBot:v1.4.1 (by /u/awesomeplaya211)"
 )
 
 
@@ -172,7 +178,7 @@ async def license(ctx):
 @bot.command(brief='Mute command',description='Mutes user. Administrator privileges required')
 async def mute(ctx, member: discord.Member):
 
-    if  ctx.author.id == 538921994645798915:
+    if ctx.message.author.guild_permissions.administrator:
 
         guild = ctx.guild
         role = discord.utils.get(guild.roles, name='Muted')
@@ -180,12 +186,18 @@ async def mute(ctx, member: discord.Member):
         await member.add_roles(role)
 
         embed=discord.Embed(title="Bad user >:(", description="{0} has been muted".format(member), color=0xae4dff)
+        embed.set_footer(text=((f'Requested by {ctx.message.author.display_name} (') + str(ctx.message.author.id) + ')'))
+        embed.timestamp = datetime.datetime.utcnow()
+
         
         await ctx.send(embed=embed)
 
     else:
 
         embed=discord.Embed(title="403 Forbidden :(", description="You don't have administrator privileges", color=0xae4dff)
+        embed.set_footer(text=((f'Requested by {ctx.message.author.display_name} (') + str(ctx.message.author.id) + ')'))
+        embed.timestamp = datetime.datetime.utcnow()
+
 
         await ctx.send(embed=embed)
 
@@ -193,7 +205,7 @@ async def mute(ctx, member: discord.Member):
 @bot.command(brief='Unmute command',description='Unmutes user. Administrator privileges required')
 async def unmute(ctx, member: discord.Member):
 
-    if  ctx.author.id == 538921994645798915:
+    if ctx.message.author.guild_permissions.administrator:
 
         guild = ctx.guild
         role = discord.utils.get(guild.roles, name='Muted')
@@ -201,12 +213,16 @@ async def unmute(ctx, member: discord.Member):
         await member.remove_roles(role)
 
         embed=discord.Embed(title="Redemption Arc :)", description="{0} has been unmuted".format(member), color=0xae4dff)
+        embed.set_footer(text=((f'Requested by {ctx.message.author.display_name} (') + str(ctx.message.author.id) + ')'))
+        embed.timestamp = datetime.datetime.utcnow()
         
         await ctx.send(embed=embed)
 
     else:
 
         embed=discord.Embed(title="403 Forbidden :(", description="You don't have administrator privileges", color=0xae4dff)
+        embed.set_footer(text=((f'Requested by {ctx.message.author.display_name} (') + str(ctx.message.author.id) + ')'))
+        embed.timestamp = datetime.datetime.utcnow()
 
         await ctx.send(embed=embed)       
 
@@ -214,18 +230,46 @@ async def unmute(ctx, member: discord.Member):
 @bot.command(brief='Kick command',description='Kicks user out of the server. Administrator privileges required')
 async def kick(ctx, member: discord.Member):
 
-    if ctx.author.id == 538921994645798915:
+    if ctx.message.author.guild_permissions.administrator:
 
         await member.kick()
 
-        embed = discord.Embed(title = "{0} has been kicked".format(member), description = "Hope you didn't do that by accident lol", color = 0xae4dff)
-        
+        embed=discord.Embed(title = "{0} has been kicked".format(member), description = "Hope you didn't do that by accident lol", color = 0xae4dff)
+        embed.set_footer(text=((f'Requested by {ctx.message.author.display_name} (') + str(ctx.message.author.id) + ')'))
+        embed.timestamp = datetime.datetime.utcnow()
+
+
         await ctx.send(embed=embed)
 
     else:
 
         embed=discord.Embed(title="403 Forbidden :(", description="You don't have administrator privileges", color=0xae4dff)
+        embed.set_footer(text=((f'Requested by {ctx.message.author.display_name} (') + str(ctx.message.author.id) + ')'))
+        embed.timestamp = datetime.datetime.utcnow()
+
+
         await ctx.send(embed=embed)
+
+
+@bot.command(brief='Returns user info',description='Returns user info')
+async def user(ctx, member: discord.Member):
+
+    embed=discord.Embed(title="User Information", color=0xae4dff)
+    embed.add_field(name='Server', value='**'+str(member.guild)+'**', inline=False)
+    embed.add_field(name='Username', value=member, inline=False)
+    embed.add_field(name='Server Nickname', value=member.nick, inline=False)
+    embed.add_field(name='ID', value='`'+str(member.id)+'`', inline=False)
+    embed.add_field(name='Status', value='`'+str(member.status)+'`', inline=False)
+    embed.add_field(name='Joined', value='`'+str(member.joined_at)+'`', inline=False)
+    embed.add_field(name='Role', value=str(member.top_role), inline=False)
+    
+    embed.set_footer(text=((f'Requested by {ctx.message.author.display_name} (') + str(ctx.message.author.id) + ')'))
+    embed.timestamp = datetime.datetime.utcnow()
+
+
+    # embed.add_field(name='Activity Details', value=str(member.activity.details), inline=False)
+    await ctx.send(embed=embed)
+
 
 
 @bot.command(brief='Dev command',description='Dev command')
@@ -305,7 +349,7 @@ async def news(ctx):
             count += 1
 
     num = 0
-    embed = discord.Embed()
+    embed = discord.Embed(color=0xae4dff)
     embedstr = ''
     for post in post_list:
 
@@ -314,6 +358,9 @@ async def news(ctx):
         embedstr += redditstr
 
     embed.description = embedstr
+    embed.set_footer(text=((f'Requested by {ctx.message.author.display_name} (') + str(ctx.message.author.id) + ')'))
+    embed.timestamp = datetime.datetime.utcnow()
+
     await ctx.channel.send(embed=embed)
 
 
@@ -350,7 +397,10 @@ async def exec(ctx, *, command):
 
 @bot.command(brief='Returns latency to the server',description='Returns latency to the server in milliseconds')
 async def ping(ctx):
-    await ctx.send(f'Pong! Latency: {round(bot.latency * 1000, 3)}ms')
+
+    embed=discord.Embed(title="Pong!", color=0xae4dff)
+    embed.add_field(name="Latency", value=(f'`{round(bot.latency * 1000, 3)}ms`'), inline=False)
+    await ctx.send(embed=embed)
 
 
 @bot.command(brief='Returns a latency graph',description='Returns a latency graph over the past 10 minutes')
@@ -381,8 +431,10 @@ async def netgraph(ctx):
     plt.savefig("temp/netgraph.png")
 
     file = discord.File("temp/netgraph.png")
-    embed = discord.Embed()
+    embed = discord.Embed(color=0xae4dff)
     embed.set_image(url="attachment://netgraph.png")
+    embed.set_footer(text=((f'Requested by {ctx.message.author.display_name} (') + str(ctx.message.author.id) + ')'))
+    embed.timestamp = datetime.datetime.utcnow()
     await ctx.send(embed=embed, file=file)
     plt.clf()
 
@@ -457,15 +509,17 @@ async def weather(ctx, *, location):
     plt.savefig("temp/forecast.png")
 
     file = discord.File("temp/forecast.png")
-    embed = discord.Embed()
+    embed = discord.Embed(color=0xae4dff)
     embed.set_image(url="attachment://forecast.png")
+    embed.set_footer(text=((f'Requested by {ctx.message.author.display_name} (') + str(ctx.message.author.id) + ')'))
+    embed.timestamp = datetime.datetime.utcnow()
     await ctx.send(embed=embed, file=file)
     plt.clf()
 
 
 @bot.command(brief='General information and credits',description='General information and credits')
 async def info(ctx):
-    await ctx.send('**RockyBot v1.4.0**\n' \
+    await ctx.send('**RockyBot v1.4.1**\n' \
         'Hi! I am a multipurpose Discord bot developed by awesomeplaya211#4051!\n' \
         'My source code is available on GitHub by using *$github*!\n' \
         'Use $canon for a story!\n'
@@ -485,7 +539,7 @@ async def canon(ctx):
 async def pfp(ctx):
 
     file = discord.File("assets/pfp.jpg")
-    embed = discord.Embed()
+    embed = discord.Embed(color=0xae4dff)
     embed.set_image(url="attachment://pfp.jpg")
     await ctx.send(embed=embed, file=file)
 
@@ -573,13 +627,22 @@ async def rps(ctx, choice):
 
 @bot.command(brief='Status check with uptime',description='Status check with uptime')
 async def status(ctx):
+    
     t2 = time.time()
-    await ctx.send('*Bot Online*')
-    string = ('Online for ' +
+
+    time_online = (
     str(math.floor((t2-t1)/3600)) + ' hours ' +
     str(math.floor(((t2-t1) % 3600)/60)) + ' minutes ' +
     str(round((t2-t1) % 60, 3)) + ' seconds')
-    await ctx.send(string)
+
+    embed=discord.Embed(title="Status", color=0xae4dff)
+    embed.add_field(name='Online for', value=time_online, inline=False)
+    embed.add_field(name="Online since", value='`'+str(t1)+'`', inline=False)
+    embed.set_footer(text=((f'Requested by {ctx.message.author.display_name} (') + str(ctx.message.author.id) + ')'))
+    embed.timestamp = datetime.datetime.utcnow()
+
+
+    await ctx.send(embed=embed)
 
 
 @bot.command(brief='Kills bot (Dev command)',description='Kills bot (Dev command)')
