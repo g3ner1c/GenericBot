@@ -1,10 +1,10 @@
 import asyncio
+import datetime
 import json
 import math
 import os
 import random
 import time
-import datetime
 
 import asyncpraw
 import discord
@@ -186,12 +186,18 @@ async def mute(ctx, member: discord.Member):
         await member.add_roles(role)
 
         embed=discord.Embed(title="Bad user >:(", description="{0} has been muted".format(member), color=0xae4dff)
+        embed.set_footer(text=((f'Requested by {ctx.message.author.display_name} (') + str(ctx.message.author.id) + ')'))
+        embed.timestamp = datetime.datetime.utcnow()
+
         
         await ctx.send(embed=embed)
 
     else:
 
         embed=discord.Embed(title="403 Forbidden :(", description="You don't have administrator privileges", color=0xae4dff)
+        embed.set_footer(text=((f'Requested by {ctx.message.author.display_name} (') + str(ctx.message.author.id) + ')'))
+        embed.timestamp = datetime.datetime.utcnow()
+
 
         await ctx.send(embed=embed)
 
@@ -207,12 +213,16 @@ async def unmute(ctx, member: discord.Member):
         await member.remove_roles(role)
 
         embed=discord.Embed(title="Redemption Arc :)", description="{0} has been unmuted".format(member), color=0xae4dff)
+        embed.set_footer(text=((f'Requested by {ctx.message.author.display_name} (') + str(ctx.message.author.id) + ')'))
+        embed.timestamp = datetime.datetime.utcnow()
         
         await ctx.send(embed=embed)
 
     else:
 
         embed=discord.Embed(title="403 Forbidden :(", description="You don't have administrator privileges", color=0xae4dff)
+        embed.set_footer(text=((f'Requested by {ctx.message.author.display_name} (') + str(ctx.message.author.id) + ')'))
+        embed.timestamp = datetime.datetime.utcnow()
 
         await ctx.send(embed=embed)       
 
@@ -225,12 +235,19 @@ async def kick(ctx, member: discord.Member):
         await member.kick()
 
         embed=discord.Embed(title = "{0} has been kicked".format(member), description = "Hope you didn't do that by accident lol", color = 0xae4dff)
-        
+        embed.set_footer(text=((f'Requested by {ctx.message.author.display_name} (') + str(ctx.message.author.id) + ')'))
+        embed.timestamp = datetime.datetime.utcnow()
+
+
         await ctx.send(embed=embed)
 
     else:
 
         embed=discord.Embed(title="403 Forbidden :(", description="You don't have administrator privileges", color=0xae4dff)
+        embed.set_footer(text=((f'Requested by {ctx.message.author.display_name} (') + str(ctx.message.author.id) + ')'))
+        embed.timestamp = datetime.datetime.utcnow()
+
+
         await ctx.send(embed=embed)
 
 
@@ -246,7 +263,9 @@ async def user(ctx, member: discord.Member):
     embed.add_field(name='Joined', value='`'+str(member.joined_at)+'`', inline=False)
     embed.add_field(name='Role', value=str(member.top_role), inline=False)
     
+    embed.set_footer(text=((f'Requested by {ctx.message.author.display_name} (') + str(ctx.message.author.id) + ')'))
     embed.timestamp = datetime.datetime.utcnow()
+
 
     # embed.add_field(name='Activity Details', value=str(member.activity.details), inline=False)
     await ctx.send(embed=embed)
@@ -339,6 +358,9 @@ async def news(ctx):
         embedstr += redditstr
 
     embed.description = embedstr
+    embed.set_footer(text=((f'Requested by {ctx.message.author.display_name} (') + str(ctx.message.author.id) + ')'))
+    embed.timestamp = datetime.datetime.utcnow()
+
     await ctx.channel.send(embed=embed)
 
 
@@ -375,7 +397,10 @@ async def exec(ctx, *, command):
 
 @bot.command(brief='Returns latency to the server',description='Returns latency to the server in milliseconds')
 async def ping(ctx):
-    await ctx.send(f'Pong! Latency: {round(bot.latency * 1000, 3)}ms')
+
+    embed=discord.Embed(title="Pong!", color=0xae4dff)
+    embed.add_field(name="Latency", value=(f'`{round(bot.latency * 1000, 3)}ms`'), inline=False)
+    await ctx.send(embed=embed)
 
 
 @bot.command(brief='Returns a latency graph',description='Returns a latency graph over the past 10 minutes')
@@ -408,6 +433,8 @@ async def netgraph(ctx):
     file = discord.File("temp/netgraph.png")
     embed = discord.Embed()
     embed.set_image(url="attachment://netgraph.png")
+    embed.set_footer(text=((f'Requested by {ctx.message.author.display_name} (') + str(ctx.message.author.id) + ')'))
+    embed.timestamp = datetime.datetime.utcnow()
     await ctx.send(embed=embed, file=file)
     plt.clf()
 
@@ -484,6 +511,8 @@ async def weather(ctx, *, location):
     file = discord.File("temp/forecast.png")
     embed = discord.Embed()
     embed.set_image(url="attachment://forecast.png")
+    embed.set_footer(text=((f'Requested by {ctx.message.author.display_name} (') + str(ctx.message.author.id) + ')'))
+    embed.timestamp = datetime.datetime.utcnow()
     await ctx.send(embed=embed, file=file)
     plt.clf()
 
@@ -609,7 +638,9 @@ async def status(ctx):
     embed=discord.Embed(title="Status", color=0xae4dff)
     embed.add_field(name='Online for', value=time_online, inline=False)
     embed.add_field(name="Online since", value='`'+str(t1)+'`', inline=False)
+    embed.set_footer(text=((f'Requested by {ctx.message.author.display_name} (') + str(ctx.message.author.id) + ')'))
     embed.timestamp = datetime.datetime.utcnow()
+
 
     await ctx.send(embed=embed)
 
