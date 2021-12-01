@@ -47,7 +47,7 @@ time_uwu = time.time()
 reddit = asyncpraw.Reddit(
     client_id="MZgXIeYJm5rsrFHm9uWCeA",
     client_secret=os.getenv('reddittoken'),
-    user_agent="discord:GenericBot:v1.4.0 (by /u/awesomeplaya211)"
+    user_agent="discord:GenericBot:v1.4.1 (by /u/awesomeplaya211)"
 )
 
 
@@ -519,7 +519,7 @@ async def weather(ctx, *, location):
 
 @bot.command(brief='General information and credits',description='General information and credits')
 async def info(ctx):
-    await ctx.send('**RockyBot v1.4.0**\n' \
+    await ctx.send('**RockyBot v1.4.1**\n' \
         'Hi! I am a multipurpose Discord bot developed by awesomeplaya211#4051!\n' \
         'My source code is available on GitHub by using *$github*!\n' \
         'Use $canon for a story!\n'
