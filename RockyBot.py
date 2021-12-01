@@ -598,13 +598,20 @@ async def rps(ctx, choice):
 
 @bot.command(brief='Status check with uptime',description='Status check with uptime')
 async def status(ctx):
+    
     t2 = time.time()
-    await ctx.send('*Bot Online*')
-    string = ('Online for ' +
+
+    time_online = ('Online for ' +
     str(math.floor((t2-t1)/3600)) + ' hours ' +
     str(math.floor(((t2-t1) % 3600)/60)) + ' minutes ' +
     str(round((t2-t1) % 60, 3)) + ' seconds')
-    await ctx.send(string)
+
+    embed=discord.Embed(title="Status", color=0xae4dff)
+    embed.add_field(name=time_online, value='', inline=False)
+    embed.add_field(name="Online Since", value='`'+t1+'`', inline=False)
+    embed.timestamp = datetime.datetime.utcnow()
+
+    await ctx.send(embed=embed)
 
 
 @bot.command(brief='Kills bot (Dev command)',description='Kills bot (Dev command)')
