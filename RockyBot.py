@@ -134,8 +134,12 @@ _8ball = ["Certainly yes", "Definentely Yes", "99.9% chance", "The chances are h
 
 @bot.command(brief='Completes text using AI',description='Completes the input text using the GPT-3 language model from OpenAI to imitate human text')
 async def ai(ctx, *, input):
-    response = requests.post(os.getenv('aiurl'), data='{"context":"' + input + '","topP":0.9,"temp":0.8,"response_length":128,"remove_input":true}').text
-    generation = json.loads(response)[0]['generated_text']
+    
+    async with ctx.typing():
+
+        response = requests.post(os.getenv('aiurl'), data='{"context":"' + input + '","topP":0.9,"temp":0.8,"response_length":128,"remove_input":true}').text
+        generation = json.loads(response)[0]['generated_text']
+
     await ctx.send(generation)
 
 
@@ -179,7 +183,7 @@ async def license(ctx):
 async def mute(ctx, member: discord.Member):
 
     if ctx.message.author.guild_permissions.administrator:
-
+        
         guild = ctx.guild
         role = discord.utils.get(guild.roles, name='Muted')
 
@@ -289,20 +293,22 @@ async def dm(ctx, user: discord.User, *, message):
 @bot.command(brief='Shows a nice piece of art',description='Scrapes a post from the top 100 posts from the past week in r/art (no nsfw obviously)')
 async def art(ctx):
 
-    subreddit = await reddit.subreddit("art")
+    async with ctx.typing():
 
-    post_list = []
+        subreddit = await reddit.subreddit("art")
 
-    count = 0
-    async for submission in subreddit.top("week"):
-        if count == 100:
-            break
-        if submission.over_18 == False and submission.is_self == False:
-            # post_url = 'https://www.reddit.com'+submission.permalink
-            post_list.append(submission)
-            count += 1
+        post_list = []
 
-    reddit_post = random.choice(post_list)
+        count = 0
+        async for submission in subreddit.top("week"):
+            if count == 100:
+                break
+            if submission.over_18 == False and submission.is_self == False:
+                # post_url = 'https://www.reddit.com'+submission.permalink
+                post_list.append(submission)
+                count += 1
+
+        reddit_post = random.choice(post_list)
     await ctx.send(reddit_post.title)
     await ctx.send(reddit_post.url)
     await ctx.send('Posted by u/'+reddit_post.author.name)
@@ -312,21 +318,23 @@ async def art(ctx):
 @bot.command(brief='Shows a cat picture :D',description='Scrapes a post from the top 100 posts from the past week in r/cats')
 async def cat(ctx):
 
-    subreddit = await reddit.subreddit("cats")
+    async with ctx.typing():
 
-    post_list = []
+        subreddit = await reddit.subreddit("cats")
 
-    count = 0
-    async for submission in subreddit.top("week"):
-        if count == 100:
-            break
-        if submission.over_18 == False and submission.is_self == False and submission.link_flair_text == "Cat Picture":
-            # post_url = 'https://www.reddit.com'+submission.permalink
-            post_list.append(submission)
-            count += 1
+        post_list = []
 
-    reddit_post = random.choice(post_list)
-    await ctx.send(reddit_post.title)
+        count = 0
+        async for submission in subreddit.top("week"):
+            if count == 100:
+                break
+            if submission.over_18 == False and submission.is_self == False and submission.link_flair_text == "Cat Picture":
+                # post_url = 'https://www.reddit.com'+submission.permalink
+                post_list.append(submission)
+                count += 1
+
+        reddit_post = random.choice(post_list)
+        await ctx.send(reddit_post.title)
     await ctx.send(reddit_post.url)
     await ctx.send('Posted by u/'+reddit_post.author.name)
     await ctx.send(str(reddit_post.score)+' upvotes')
@@ -335,27 +343,29 @@ async def cat(ctx):
 @bot.command(brief='Shows top 10 trending news from r/news',description='Scrapes the top 10 posts from the hot feed of r/news')
 async def news(ctx):
 
-    subreddit = await reddit.subreddit("news")
+    async with ctx.typing():
 
-    post_list = []
+        subreddit = await reddit.subreddit("news")
 
-    count = 0
-    async for submission in subreddit.hot():
-        if count == 10:
-            break
-        if submission.over_18 == False:
-            # post_url = 'https://www.reddit.com'+submission.permalink
-            post_list.append(submission)
-            count += 1
+        post_list = []
 
-    num = 0
-    embed = discord.Embed(color=0xae4dff)
-    embedstr = ''
-    for post in post_list:
+        count = 0
+        async for submission in subreddit.hot():
+            if count == 10:
+                break
+            if submission.over_18 == False:
+                # post_url = 'https://www.reddit.com'+submission.permalink
+                post_list.append(submission)
+                count += 1
 
-        num += 1
-        redditstr = str(num) + ') [' + post.title + '](' + post.url + ')\n\n'
-        embedstr += redditstr
+        num = 0
+        embed = discord.Embed(color=0xae4dff)
+        embedstr = ''
+        for post in post_list:
+
+            num += 1
+            redditstr = str(num) + ') [' + post.title + '](' + post.url + ')\n\n'
+            embedstr += redditstr
 
     embed.description = embedstr
     embed.set_footer(text=((f'Requested by {ctx.message.author.display_name} (') + str(ctx.message.author.id) + ')'))
@@ -400,41 +410,46 @@ async def ping(ctx):
 
     embed=discord.Embed(title="Pong!", color=0xae4dff)
     embed.add_field(name="Latency", value=(f'`{round(bot.latency * 1000, 3)}ms`'), inline=False)
+    embed.set_footer(text=((f'Requested by {ctx.message.author.display_name} (') + str(ctx.message.author.id) + ')'))
+    embed.timestamp = datetime.datetime.utcnow()
+    
     await ctx.send(embed=embed)
 
 
 @bot.command(brief='Returns a latency graph',description='Returns a latency graph over the past 10 minutes')
 async def netgraph(ctx):
 
-    time_since_ping = round(time.time() - time_ping)
+    async with ctx.typing():
 
-    x = np.append(np.arange((len(ping_arr) - 1)*-
-                  40, 1, 40) - time_since_ping, 0)
-    y = np.append(ping_arr, ping_arr[len(ping_arr) - 1])
+        time_since_ping = round(time.time() - time_ping)
 
-    X_ = np.linspace(min(x), max(x), 500)
-    X_Y_Spline = make_interp_spline(x, y)
-    Y_ = X_Y_Spline(X_)
+        x = np.append(np.arange((len(ping_arr) - 1)*-
+                    40, 1, 40) - time_since_ping, 0)
+        y = np.append(ping_arr, ping_arr[len(ping_arr) - 1])
 
-    plt.plot(X_, Y_, color='red')
+        X_ = np.linspace(min(x), max(x), 500)
+        X_Y_Spline = make_interp_spline(x, y)
+        Y_ = X_Y_Spline(X_)
 
-    plt.xlim(-600, 0)
+        plt.plot(X_, Y_, color='red')
 
-    plt.ylim(0, max(Y_)*1.1)
+        plt.xlim(-600, 0)
 
-    plt.xlabel('Time')
+        plt.ylim(0, max(Y_)*1.1)
 
-    plt.ylabel('Milliseconds')
+        plt.xlabel('Time')
 
-    plt.title('Latency within the last 10 minutes')
+        plt.ylabel('Milliseconds')
 
-    plt.savefig("temp/netgraph.png")
+        plt.title('Latency within the last 10 minutes')
 
-    file = discord.File("temp/netgraph.png")
-    embed = discord.Embed(color=0xae4dff)
-    embed.set_image(url="attachment://netgraph.png")
-    embed.set_footer(text=((f'Requested by {ctx.message.author.display_name} (') + str(ctx.message.author.id) + ')'))
-    embed.timestamp = datetime.datetime.utcnow()
+        plt.savefig("temp/netgraph.png")
+
+        file = discord.File("temp/netgraph.png")
+        embed = discord.Embed(color=0xae4dff)
+        embed.set_image(url="attachment://netgraph.png")
+        embed.set_footer(text=((f'Requested by {ctx.message.author.display_name} (') + str(ctx.message.author.id) + ')'))
+        embed.timestamp = datetime.datetime.utcnow()
     await ctx.send(embed=embed, file=file)
     plt.clf()
 
@@ -442,77 +457,79 @@ async def netgraph(ctx):
 @bot.command(brief='Gives a weather report at the location',description='Gives a weather report at the location with temperature, wind speed, humidity, air pressure, and a forecast chart')
 async def weather(ctx, *, location):
 
-    owm = OWM('a4348bddc4faa37365b82cee8c3136da')
-    mgr = owm.weather_manager()
-    # the observation object is a box containing a weather object
-    observation = mgr.weather_at_place(location)
-    w = observation.weather
+    async with ctx.typing():
 
-    reg = owm.city_id_registry()
-    list_of_locations = reg.locations_for(location)
+        owm = OWM('a4348bddc4faa37365b82cee8c3136da')
+        mgr = owm.weather_manager()
+        # the observation object is a box containing a weather object
+        observation = mgr.weather_at_place(location)
+        w = observation.weather
 
-    embedVar = discord.Embed(title="Weather in " + location, color=0xae4dff)
+        reg = owm.city_id_registry()
+        list_of_locations = reg.locations_for(location)
 
-    embedVar.add_field(name="Current Temperature", value=
-        str(w.temperature('fahrenheit')['temp']) + ' °F / ' +
-        str(w.temperature('celsius')['temp']) + ' °C',
-        inline=False)
+        embedVar = discord.Embed(title="Weather in " + location, color=0xae4dff)
 
-    embedVar.add_field(name="High", value=
-        str(w.temperature('fahrenheit')['temp_max']) + ' °F / ' +
-        str(w.temperature('celsius')['temp_max']) + ' °C',
-        inline=False)
-    
-    embedVar.add_field(name="Low", value=
-        str(w.temperature('fahrenheit')['temp_min']) + ' °F / ' +
-        str(w.temperature('celsius')['temp_min']) + ' °C',
-        inline=False)
+        embedVar.add_field(name="Current Temperature", value=
+            str(w.temperature('fahrenheit')['temp']) + ' °F / ' +
+            str(w.temperature('celsius')['temp']) + ' °C',
+            inline=False)
 
-    embedVar.add_field(name="Feels like", value=
-        str(w.temperature('fahrenheit')['feels_like']) + ' °F / ' +
-        str(w.temperature('celsius')['feels_like']) + ' °C',
-        inline=False)
+        embedVar.add_field(name="High", value=
+            str(w.temperature('fahrenheit')['temp_max']) + ' °F / ' +
+            str(w.temperature('celsius')['temp_max']) + ' °C',
+            inline=False)
+        
+        embedVar.add_field(name="Low", value=
+            str(w.temperature('fahrenheit')['temp_min']) + ' °F / ' +
+            str(w.temperature('celsius')['temp_min']) + ' °C',
+            inline=False)
 
-    embedVar.add_field(name="Wind Speed", value=str(
-        w.wind()['speed']) + ' m/s', inline=False)
+        embedVar.add_field(name="Feels like", value=
+            str(w.temperature('fahrenheit')['feels_like']) + ' °F / ' +
+            str(w.temperature('celsius')['feels_like']) + ' °C',
+            inline=False)
 
-    embedVar.add_field(name='Humidity', value=str(
-        w.humidity) + '%', inline=False)
+        embedVar.add_field(name="Wind Speed", value=str(
+            w.wind()['speed']) + ' m/s', inline=False)
 
-    embedVar.add_field(name='Air Pressure', value=str(
-        w.pressure['press']) + ' hPa', inline=False)
+        embedVar.add_field(name='Humidity', value=str(
+            w.humidity) + '%', inline=False)
 
-    await ctx.send(embed=embedVar)
+        embedVar.add_field(name='Air Pressure', value=str(
+            w.pressure['press']) + ' hPa', inline=False)
 
-    _3h_forecast = mgr.forecast_at_place(location, '3h').forecast
-    forecast_temps = np.array([])
-    for weather in _3h_forecast:
+        await ctx.send(embed=embedVar)
 
-        forecast_temps = np.append(
-            forecast_temps, weather.temperature('fahrenheit')['temp'])
+        _3h_forecast = mgr.forecast_at_place(location, '3h').forecast
+        forecast_temps = np.array([])
+        for weather in _3h_forecast:
 
-    x = np.arange(3, 121, 3)
-    y = forecast_temps
+            forecast_temps = np.append(
+                forecast_temps, weather.temperature('fahrenheit')['temp'])
 
-    plt.plot(x, y, color='red')
+        x = np.arange(3, 121, 3)
+        y = forecast_temps
 
-    plt.xlim(0, 120)
+        plt.plot(x, y, color='red')
 
-    plt.ylim(min(y)*0.9, max(y)*1.1)
+        plt.xlim(0, 120)
 
-    plt.xlabel('Hours into the future')
+        plt.ylim(min(y)*0.9, max(y)*1.1)
 
-    plt.ylabel('Temperature in Fahrenheit(°F)')
+        plt.xlabel('Hours into the future')
 
-    plt.title('3 Hour Interval Forecast at ' + location)
+        plt.ylabel('Temperature in Fahrenheit(°F)')
 
-    plt.savefig("temp/forecast.png")
+        plt.title('3 Hour Interval Forecast at ' + location)
 
-    file = discord.File("temp/forecast.png")
-    embed = discord.Embed(color=0xae4dff)
-    embed.set_image(url="attachment://forecast.png")
-    embed.set_footer(text=((f'Requested by {ctx.message.author.display_name} (') + str(ctx.message.author.id) + ')'))
-    embed.timestamp = datetime.datetime.utcnow()
+        plt.savefig("temp/forecast.png")
+
+        file = discord.File("temp/forecast.png")
+        embed = discord.Embed(color=0xae4dff)
+        embed.set_image(url="attachment://forecast.png")
+        embed.set_footer(text=((f'Requested by {ctx.message.author.display_name} (') + str(ctx.message.author.id) + ')'))
+        embed.timestamp = datetime.datetime.utcnow()
     await ctx.send(embed=embed, file=file)
     plt.clf()
 
@@ -553,7 +570,7 @@ async def github(ctx):
 @bot.command(brief='Add me to your server!',description='Add me to your server!')
 async def invite(ctx):
     await ctx.send('Add me to your server!')
-    await ctx.send('https://discord.com/api/oauth2/authorize?client_id=866481377151156304&permissions=259846044736&scope=applications.commands%20bot')
+    await ctx.send('https://discord.com/api/oauth2/authorize?client_id=866481377151156304&permissions=8&scope=bot%20applications.commands')
 
 
 @bot.command(brief='Flips a coin',description='Flips a coin')
